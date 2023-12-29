@@ -195,6 +195,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <profile.active>dev</profile.active>
     </properties>
     <build>
         <finalName>backend</finalName>
