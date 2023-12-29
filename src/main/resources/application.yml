@@ -1,0 +1,35 @@
+app:
+  jwtExpiration: 600
+  jwtSecret: appSecretKey
+management:
+  endpoint:
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+spring:
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  #    cache:
+  #        type: redis
+  profiles:
+    active: dev
+  #    redis:
+  #        host: localhost
+  #        port: 6379
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+#    rabbitmq:
+#        host: localhost
+#        port: 5672
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    operations-sorter: method

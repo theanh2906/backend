@@ -1,0 +1,21 @@
+version: "3"
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+#    environment:
+#      RABBITMQ_DEFAULT_USER: admin
+#      RABBITMQ_DEFAULT_PASS: admin
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: Jackytang2906
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"

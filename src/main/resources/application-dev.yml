@@ -1,0 +1,23 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    hikari:
+      schema: public
+    password: Jackytang2906
+    url: jdbc:postgresql://localhost:5432/tools
+    username: postgres
+  flyway:
+    enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        validator:
+          apply_to_ddl: false
+    show-sql: false
