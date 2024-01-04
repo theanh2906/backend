@@ -22,7 +22,7 @@ public class BackendApplication extends SpringBootServletInitializer implements 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry
-                        .addMapping("**")
+                        .addMapping("/**")
                         .allowedOrigins("http://localhost:8081", "http://localhost:4200", "https://theanh2906.ddns.net")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
             }
