@@ -82,7 +82,8 @@ public class MyWebSecurityConfiguration {
                     authorize
                             .requestMatchers("/**").permitAll()
                             .anyRequest().permitAll();
-                });
+                })
+                .addFilter(corsFilter());
 //                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 //                .requestMatchers("/api/events/**", "/api/notes/**").hasRole("ADMIN")
 //                .requestMatchers("/api/auth/**").permitAll()
