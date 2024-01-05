@@ -1,5 +1,6 @@
 package com.example.backend;
 
+import com.example.backend.shared.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -23,7 +24,7 @@ public class BackendApplication extends SpringBootServletInitializer implements 
             public void addCorsMappings(CorsRegistry registry) {
                 registry
                         .addMapping("/**")
-                        .allowedOrigins("http://localhost:8081", "http://localhost:4200", "https://theanh2906.ddns.net")
+                        .allowedOrigins(Constant.CROSS_ORIGIN_ALLOW_LIST)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
             }
         };
