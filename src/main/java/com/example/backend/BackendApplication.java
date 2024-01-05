@@ -16,14 +16,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.example.backend.repositories")
 @EnableCaching
-public class BackendApplication extends SpringBootServletInitializer implements WebMvcConfigurer {
+public class BackendApplication extends SpringBootServletInitializer implements CommandLineRunner {
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry
+                        .addMapping("/api/**")
+                        .allowedOrigins(Constant.CROSS_ORIGIN_ALLOW_LIST)
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+            }
+        };
+    }
+
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry
-                .addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("*")
-                .allowedHeaders("*");
+    public void run(String... args) throws Exception {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackendApplication.class);
