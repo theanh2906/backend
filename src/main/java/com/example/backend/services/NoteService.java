@@ -19,8 +19,8 @@ import java.util.UUID;
 @Service
 public class NoteService {
     public NoteDto addNote(Note note) {
-        User currentUser = SecurityUtils.getCurrentUser().toModel();
-        note.setUser(currentUser);
+//        User currentUser = SecurityUtils.getCurrentUser().toModel();
+        note.setUser(Constant.ADMIN);
         note.setId(UUID.randomUUID().toString());
         note.setCreatedDate(new Date().getTime());
         return NoteMapper.toDto(noteRepository.save(note));
