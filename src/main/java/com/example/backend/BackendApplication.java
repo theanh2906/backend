@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.example.backend.repositories")
 @EnableCaching
-public class BackendApplication implements CommandLineRunner {
+public class BackendApplication extends SpringBootServletInitializer implements CommandLineRunner {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -24,8 +24,9 @@ public class BackendApplication implements CommandLineRunner {
             public void addCorsMappings(CorsRegistry registry) {
                 registry
                         .addMapping("/**")
-                        .allowedOrigins(Constant.CROSS_ORIGIN_ALLOW_LIST)
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+                        .allowedOrigins("*")
+                        .allowedMethods("*")
+                        .allowedHeaders("*");
             }
         };
     }

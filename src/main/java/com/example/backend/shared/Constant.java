@@ -7,7 +7,10 @@ import com.example.backend.models.User;
 public class Constant {
     public static final String ADMIN_ID = "629ce7bb-2713-43be-a9bf-1538ff77218a";
     public static final User ADMIN = new User("629ce7bb-2713-43be-a9bf-1538ff77218a", "theanh2906@gmail.com", "theanh2906@gmail.com");
-    public static final String[] CROSS_ORIGIN_ALLOW_LIST = new String[]{"http://localhost:8081", "http://localhost:4200", "https://benna.vercel.app", "https://theanh2906.ddns.net"};
+    public static final String[] CROSS_ORIGIN_ALLOW_LIST = new String[]{
+            "http://localhost:8081", "http://localhost:4200",
+            "https://benna.vercel.app", "https://theanh2906.ddns.net"
+    };
 
     public static class Firebase {
         public static final String API_URL = "https://useful-tools-api-default-rtdb.firebaseio.com";
