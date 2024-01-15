@@ -31,7 +31,7 @@ public class BackendApplication extends SpringBootServletInitializer implements 
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackendApplication.class);

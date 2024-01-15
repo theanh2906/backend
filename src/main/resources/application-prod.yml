@@ -5,7 +5,7 @@ spring:
     hikari:
       schema: public
     password: BenNa1402*
-    url: jdbc:postgresql://theanh2906.ddns.net:5432/backend
+    url: jdbc:postgresql://postgres:5432/postgres
     username: postgres
   flyway:
     enabled: true
