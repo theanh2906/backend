@@ -1,6 +1,7 @@
 package com.example.backend.rest;
 
 import com.example.backend.dtos.ResponseDto;
+import com.example.backend.dtos.UserDto;
 import com.example.backend.models.User;
 import com.example.backend.repositories.UserRepository;
 import com.example.backend.services.BarcodeService;
@@ -73,4 +74,11 @@ public class TestController {
     private BarcodeService barcodeService;
     @Autowired
     private QueueMessagingTemplate messagingTemplate;
+    @Autowired
+    private UserRepository userRepository;
+
+    @GetMapping("all-users")
+    public ResponseEntity<?> allUsers() {
+        return ResponseEntity.ok(userRepository.findAll());
+    }
 }
