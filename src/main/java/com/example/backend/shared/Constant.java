@@ -9,7 +9,7 @@ public class Constant {
     public static final User ADMIN = new User("629ce7bb-2713-43be-a9bf-1538ff77218a", "theanh2906@gmail.com", "theanh2906@gmail.com");
     public static final String[] CROSS_ORIGIN_ALLOW_LIST = new String[]{
             "http://localhost:8080", "http://localhost:4200",
-            "https://benna.vercel.app", "https://theanh2906.ddns.net"
+            "https://benna.vercel.app", "https://theanh2906.ddns.net", "http://localhost:8888"
     };
 
     public static class Firebase {
