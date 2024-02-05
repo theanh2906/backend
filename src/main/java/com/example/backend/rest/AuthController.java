@@ -1,9 +1,6 @@
 package com.example.backend.rest;
 
-import com.example.backend.dtos.JwtResponse;
-import com.example.backend.dtos.LoginRequest;
-import com.example.backend.dtos.ResponseDto;
-import com.example.backend.dtos.SignupRequest;
+import com.example.backend.dtos.*;
 import com.example.backend.mappers.UserMapper;
 import com.example.backend.models.Role;
 import com.example.backend.models.RoleEnum;
@@ -94,6 +91,11 @@ public class AuthController {
         } catch (ConstraintViolationException e) {
             return ResponseEntity.badRequest().body(new ResponseDto<>(false, e.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.toList())));
         }
+    }
+
+    @PostMapping("add-user")
+    public ResponseEntity<?> addUserInDb(@RequestBody FirebaseUser user) {
+        return ResponseEntity.ok(user);
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);

@@ -16,7 +16,7 @@ spring:
   #    cache:
   #        type: redis
   profiles:
-    active: ${profile.active}
+    active: prod
   #    redis:
   #        host: localhost
   #        port: 6379

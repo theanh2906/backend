@@ -4,6 +4,7 @@ import com.example.backend.models.Event;
 import com.example.backend.models.User;
 import com.example.backend.repositories.EventRepository;
 import com.example.backend.repositories.UserRepository;
+import com.example.backend.shared.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +15,8 @@ import java.util.UUID;
 @Service
 public class EventService {
     public Event addEvent(Event event, String userId) throws Exception {
-        User user = userRepository.findById(userId).orElseThrow(Exception::new);
         event.setId(UUID.randomUUID().toString());
-        event.setUser(user);
+        event.setUser(null);
         return eventRepository.save(event);
     }
 
@@ -27,6 +27,10 @@ public class EventService {
 
     public List<Event> findAllByUser(String userId) {
         return eventRepository.findAllByUser(userId);
+    }
+
+    public List<Event> findAll() {
+        return eventRepository.findAll();
     }
 
     @Autowired

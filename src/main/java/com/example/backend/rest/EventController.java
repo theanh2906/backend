@@ -41,7 +41,7 @@ public class EventController {
     @GetMapping("")
     public List<EventDto> findAll() {
         UserDto currentUser = SecurityUtils.getCurrentUser();
-        return eventService.findAllByUser(currentUser.getId())
+        return eventService.findAll()
                 .stream()
                 .map(EventMapper::toDto)
                 .sorted(Comparator.comparing(EventDto::getStart))
@@ -50,7 +50,6 @@ public class EventController {
 
     @GetMapping("/firebase")
     public Flux<EventDto> getFirebaseData() throws Exception {
-        UserDto currentUser = SecurityUtils.getCurrentUser();
         WebClient client = WebClient.builder().baseUrl(Constant.Firebase.EVENTS_API).build();
         Flux<Map> rawResponse = client.get().retrieve().bodyToFlux(Map.class);
         Flux<EventDto> response = rawResponse.flatMap(map -> {
