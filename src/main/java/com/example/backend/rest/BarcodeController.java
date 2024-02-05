@@ -25,7 +25,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/qr")
-@PreAuthorize("permitAll()")
 public class BarcodeController {
     @Autowired
     private BarcodeService barcodeService;

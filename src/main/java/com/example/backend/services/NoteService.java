@@ -19,8 +19,8 @@ import java.util.UUID;
 @Service
 public class NoteService {
     public NoteDto addNote(Note note) {
-        User currentUser = SecurityUtils.getCurrentUser().toModel();
-        note.setUser(currentUser);
+//        User currentUser = SecurityUtils.getCurrentUser().toModel();
+        note.setUser(null);
         note.setId(UUID.randomUUID().toString());
         note.setCreatedDate(new Date().getTime());
         return NoteMapper.toDto(noteRepository.save(note));
@@ -32,7 +32,7 @@ public class NoteService {
     }
 
     public List<Note> findAll() {
-        return noteRepository.findAllByUser(Constant.ADMIN_ID);
+        return noteRepository.findAll();
     }
 
     @Transactional

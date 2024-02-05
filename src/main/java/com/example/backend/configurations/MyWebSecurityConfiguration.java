@@ -51,7 +51,7 @@ public class MyWebSecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .exceptionHandling((exception) -> exception.authenticationEntryPoint(unauthorizedHandler))
+//                .exceptionHandling((exception) -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(sessionConfigurer ->
                         sessionConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

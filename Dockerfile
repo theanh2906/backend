@@ -1,18 +1,14 @@
-FROM maven:3.8.6
+FROM maven:3.8.6 AS build
 
 WORKDIR /app
 
 COPY pom.xml .
-RUN mvn dependency:go-offline
+COPY src ./src
 
-COPY . .
-RUN mvn -Dprofile.active=prod clean install
+RUN mvn clean install
 
-FROM openjdk:17-jdk-alpine
-ARG JAR_FILE=target/*.jar
+FROM openjdk:17-alpine
+WORKDIR /app
+COPY --from=build /app/target/backend.jar backend.jar
 
-COPY ${JAR_FILE} backend.jar
-
-RUN rm -rf target/
-
-ENTRYPOINT ["java","-jar","/backend.jar"]
+ENTRYPOINT ["java", "-jar", "backend.jar"]

@@ -15,7 +15,8 @@ public class SecurityUtils {
     }
 
     public static boolean isAnonymous() {
-        return SecurityContextHolder.getContext().getAuthentication() == null
+        return SecurityContextHolder.getContext() == null
+                || SecurityContextHolder.getContext().getAuthentication() == null
                 || SecurityContextHolder.getContext().getAuthentication().getPrincipal() == "anonymousUser";
     }
 }
