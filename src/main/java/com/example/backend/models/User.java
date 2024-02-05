@@ -1,5 +1,8 @@
 package com.example.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,15 +47,13 @@ public class User implements Serializable {
     @Serial
     private static final long serialVersionUID = -7673348361769604572L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     @Column
     private String username;
     @Column
     private String email;
-    @Column
-    private String password;
-    @ManyToMany
+    @JsonManagedReference
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private Set<Role> roles = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -60,4 +61,14 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Note> notes = new HashSet<>();
+
+    public User getGeneralDetail() {
+        return User
+                .builder()
+                .id(this.id)
+                .username(this.username)
+                .email(this.email)
+                .roles(this.roles)
+                .build();
+    }
 }

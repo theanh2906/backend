@@ -20,7 +20,7 @@ public class JwtUtils {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
-                .setClaims(new JSONObject(UserMapper.toDto(userPrincipal)).toMap())
+                .setClaims(new JSONObject(UserMapper.toModel(userPrincipal)).toMap())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs * 1000L))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)

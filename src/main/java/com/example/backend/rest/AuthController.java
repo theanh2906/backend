@@ -8,12 +8,14 @@ import com.example.backend.models.User;
 import com.example.backend.repositories.RoleRepository;
 import com.example.backend.repositories.UserRepository;
 import com.example.backend.services.UserDetailsImpl;
+import com.example.backend.services.UserService;
 import com.example.backend.utils.JwtUtils;
 import com.example.backend.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +42,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    @Autowired
+    private UserService userService;
     /**
      * Method to authenticate login request
      *
@@ -73,6 +78,7 @@ public class AuthController {
      */
     @Operation(summary = "Signup new credential")
     @PostMapping("/signup")
+    @Deprecated
     public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
         try {
             if (userRepository.existsByUsername(signupRequest.getUsername())) {
@@ -81,8 +87,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(new ResponseDto<>(false, "Email already exist!"));
             }
 
-            User user = UserMapper.toDto(signupRequest);
-            user.setPassword(encoder.encode(signupRequest.getPassword()));
+            User user = UserMapper.toModel(signupRequest);
             Set<Role> roles = new HashSet<>();
             roles.add(roleRepository.findByName(RoleEnum.ROLE_USER).orElse(null));
             user.setRoles(roles);
@@ -95,7 +100,7 @@ public class AuthController {
 
     @PostMapping("add-user")
     public ResponseEntity<?> addUserInDb(@RequestBody FirebaseUser user) {
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userService.addUser(user));
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);

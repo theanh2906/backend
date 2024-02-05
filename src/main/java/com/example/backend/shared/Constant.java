@@ -91,4 +91,9 @@ public class Constant {
         public static final String ACCEPT_X_HTLM = "Accept-X-HTLM";
         public static final String SESSION_ID = "session_id";
     }
+
+    public static class Role {
+        public static final long USER = 3;
+        public static final long ADMIN = 1;
+    }
 }
