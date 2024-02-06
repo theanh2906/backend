@@ -23,9 +23,9 @@ public class UserService {
         User result = userRepository.save(addedUser);
         return UserDto
                 .builder()
-                .id(addedUser.getId())
-                .email(addedUser.getEmail())
-                .username(addedUser.getUsername())
+                .id(result.getId())
+                .email(result.getEmail())
+                .username(result.getUsername())
                 .build();
     }
 }
