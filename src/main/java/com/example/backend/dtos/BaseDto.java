@@ -1,5 +1,6 @@
 package com.example.backend.dtos;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serial;

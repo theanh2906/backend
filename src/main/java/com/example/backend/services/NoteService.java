@@ -31,6 +31,11 @@ public class NoteService {
         return noteRepository.deleteNotes(id);
     }
 
+    @Transactional
+    public void deleteAll() {
+        noteRepository.deleteAll();
+    }
+
     public List<Note> findAll() {
         return noteRepository.findAll();
     }
@@ -42,6 +47,8 @@ public class NoteService {
         savedNote.setContent(note.getContent());
         return noteRepository.save(savedNote);
     }
+
+
     @Autowired
     private UserRepository userRepository;
     @Autowired

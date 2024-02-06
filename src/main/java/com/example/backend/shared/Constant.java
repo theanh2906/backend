@@ -15,6 +15,7 @@ public class Constant {
     public static class Firebase {
         public static final String API_URL = "https://useful-tools-api-default-rtdb.firebaseio.com";
         public static final String EVENTS_API = "https://useful-tools-api-default-rtdb.firebaseio.com/events.json";
+        public static final String NOTES_API = "https://useful-tools-api-default-rtdb.firebaseio.com/notes.json";
     }
 
     public static class AWSConfig {

@@ -1,10 +1,13 @@
 package com.example.backend.rest;
 
+import com.example.backend.dtos.EventDto;
 import com.example.backend.dtos.NoteDto;
 import com.example.backend.dtos.ResponseDto;
+import com.example.backend.mappers.EventMapper;
 import com.example.backend.mappers.NoteMapper;
 import com.example.backend.models.Note;
 import com.example.backend.services.NoteService;
+import com.example.backend.shared.Constant;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +22,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -51,8 +60,37 @@ public class NoteController {
                 .findAll()
                 .stream()
                 .map(NoteMapper::toDto)
-                .sorted(Comparator.comparing(NoteDto::getCreatedDate))
+//                .sorted(Comparator.comparing(NoteDto::getCreatedDate))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/firebase")
+    public Flux<NoteDto> getFirebaseData() {
+        WebClient client = WebClient.builder().baseUrl(Constant.Firebase.NOTES_API).build();
+        Flux<Map> rawResponse = client.get().retrieve().bodyToFlux(Map.class);
+        Flux<NoteDto> response = rawResponse.flatMap(map -> {
+            List<NoteDto> listNotes = new ArrayList<>();
+            map.keySet().forEach(note -> {
+                String id = (String) note;
+                listNotes.add(NoteDto.builder()
+                        .id(id)
+                        .title((String) ((LinkedHashMap<?, ?>) map.get(id)).get("title"))
+                        .content((String) ((LinkedHashMap<?, ?>) map.get(id)).get("content"))
+                        .createdDate(((LinkedHashMap<?, ?>) map.get(id)).get("createdDate"))
+                        .build());
+            });
+            return Flux.fromIterable(listNotes);
+        });
+        noteService.deleteAll();
+        response.flatMap((each) -> {
+            try {
+                noteService.addNote(NoteMapper.toModel(each));
+            } catch (Exception e) {
+                return Flux.error(new RuntimeException(e));
+            }
+            return Mono.just(each);
+        }).subscribe();
+        return response;
     }
 
     @PutMapping("")

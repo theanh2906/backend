@@ -50,7 +50,7 @@ public class EventController {
     }
 
     @GetMapping("/firebase")
-    public Flux<EventDto> getFirebaseData() throws Exception {
+    public Flux<EventDto> getFirebaseData() {
         WebClient client = WebClient.builder().baseUrl(Constant.Firebase.EVENTS_API).build();
         Flux<Map> rawResponse = client.get().retrieve().bodyToFlux(Map.class);
         Flux<EventDto> response = rawResponse.flatMap(map -> {
