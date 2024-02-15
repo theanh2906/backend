@@ -18,12 +18,15 @@ import java.util.UUID;
 
 @Service
 public class NoteService {
-    public NoteDto addNote(Note note) {
+    public NoteDto addNote(NoteDto note) {
 //        User currentUser = SecurityUtils.getCurrentUser().toModel();
-        note.setUser(null);
-        note.setId(UUID.randomUUID().toString());
-        note.setCreatedDate(new Date().getTime());
-        return NoteMapper.toDto(noteRepository.save(note));
+        final Note savedNote = NoteMapper.toModel(note);
+        savedNote.setUser(null);
+        savedNote.setId(UUID.randomUUID().toString());
+        savedNote.setTitle(note.getTitle());
+        savedNote.setContent(note.getContent());
+        savedNote.setCategories(null);
+        return NoteMapper.toDto(noteRepository.save(savedNote));
     }
 
     @Transactional
@@ -45,6 +48,7 @@ public class NoteService {
         Note savedNote = noteRepository.findNote(note.getId());
         savedNote.setLastModifiedDate(new Date().getTime());
         savedNote.setContent(note.getContent());
+        savedNote.setTitle(note.getTitle());
         return noteRepository.save(savedNote);
     }
 

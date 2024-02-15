@@ -13,7 +13,7 @@ public class EventMapper {
     }
 
     public static EventDto toDto(Event model) {
-        final EventDto dto = Utils.getInstance(EventDto.class);
+        final EventDto dto = EventDto.builder().build();
         BeanUtils.copyProperties(model, dto);
         return dto;
     }

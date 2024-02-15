@@ -39,7 +39,7 @@ public class NoteController {
     //    @CacheEvict(value = "notes", allEntries = true)
     @PostMapping("/new")
     @Operation(summary = "Add new note")
-    public ResponseEntity<?> addNote(@RequestBody Note note) {
+    public ResponseEntity<?> addNote(@RequestBody NoteDto note) {
         return ResponseEntity.ok(noteService.addNote(note));
     }
 
@@ -84,7 +84,7 @@ public class NoteController {
         noteService.deleteAll();
         response.flatMap((each) -> {
             try {
-                noteService.addNote(NoteMapper.toModel(each));
+                noteService.addNote(each);
             } catch (Exception e) {
                 return Flux.error(new RuntimeException(e));
             }

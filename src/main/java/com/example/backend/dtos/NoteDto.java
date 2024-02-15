@@ -17,4 +17,5 @@ public class NoteDto implements Serializable {
     private String content;
     private String title;
     private Object createdDate;
+    private Object modifiedDate;
 }

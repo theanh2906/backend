@@ -30,10 +30,10 @@ public class MyWebSecurityConfiguration {
     @Autowired
     private CustomOAuth2UserService oauth2UserService;
 
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
-    }
+//    @Bean
+//    public AuthTokenFilter authenticationJwtTokenFilter() {
+//        return new AuthTokenFilter();
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
