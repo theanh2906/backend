@@ -1,11 +1,8 @@
 package com.example.backend.rest;
 
-import com.example.backend.dtos.EventDto;
 import com.example.backend.dtos.NoteDto;
 import com.example.backend.dtos.ResponseDto;
-import com.example.backend.mappers.EventMapper;
 import com.example.backend.mappers.NoteMapper;
-import com.example.backend.models.Note;
 import com.example.backend.services.NoteService;
 import com.example.backend.shared.Constant;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +23,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +35,7 @@ public class NoteController {
     @PostMapping("/new")
     @Operation(summary = "Add new note")
     public ResponseEntity<?> addNote(@RequestBody NoteDto note) {
-        return ResponseEntity.ok(noteService.addNote(note));
+        return ResponseEntity.ok(noteService.addNote(note, false));
     }
 
     //    @CacheEvict(value = "notes", allEntries = true)
@@ -81,10 +76,9 @@ public class NoteController {
             });
             return Flux.fromIterable(listNotes);
         });
-        noteService.deleteAll();
         response.flatMap((each) -> {
             try {
-                noteService.addNote(each);
+                noteService.addNote(each, true);
             } catch (Exception e) {
                 return Flux.error(new RuntimeException(e));
             }

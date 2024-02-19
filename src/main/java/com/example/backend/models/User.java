@@ -1,14 +1,10 @@
 package com.example.backend.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -44,6 +40,15 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    public User getGeneralDetail() {
+        return User
+                .builder()
+                .id(this.id)
+                .username(this.username)
+                .email(this.email)
+                .roles(this.roles)
+                .build();
+    }
     @Serial
     private static final long serialVersionUID = -7673348361769604572L;
     @Id
@@ -58,17 +63,6 @@ public class User implements Serializable {
     private Set<Role> roles = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Event> events = new HashSet<>();
-
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Note> notes = new HashSet<>();
-
-    public User getGeneralDetail() {
-        return User
-                .builder()
-                .id(this.id)
-                .username(this.username)
-                .email(this.email)
-                .roles(this.roles)
-                .build();
-    }
 }

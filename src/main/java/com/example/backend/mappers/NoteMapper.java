@@ -21,7 +21,7 @@ public class NoteMapper {
                 model.setCreatedDate(((Integer) createdDate).longValue());
             }
         }
-        if (modifiedDate != null){
+        if (modifiedDate != null) {
             if (modifiedDate instanceof Long) {
                 model.setLastModifiedDate((Long) modifiedDate);
             } else {

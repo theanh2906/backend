@@ -21,8 +21,17 @@ import java.util.Comparator;
 @RestController
 @RequestMapping("/api/fshare")
 public class FshareController {
-    @Autowired
-    private FshareService fshareService;
+    @GetMapping("/folders")
+    Flux<FileFolderInfo> getAllFolders() {
+        return fshareService
+                .getFolders()
+                .sort(Comparator.comparing(FileFolderInfo::getType));
+    }
+
+    @GetMapping("/user-info")
+    Mono<UserInfoResponse> getUserInfo() {
+        return fshareService.getUserInfo();
+    }
 
     @PostMapping("/login")
     Mono<LoginResponse> login() {
@@ -34,20 +43,11 @@ public class FshareController {
         return fshareService.logout(sessionId, token);
     }
 
-    @GetMapping("/user-info")
-    Mono<UserInfoResponse> getUserInfo() {
-        return fshareService.getUserInfo();
-    }
-
     @PostMapping("/upload")
     Mono<UploadResponse> upload(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         return fshareService.upload(file, path).doOnError(Throwable::printStackTrace);
     }
 
-    @GetMapping("/folders")
-    Flux<FileFolderInfo> getAllFolders() {
-        return fshareService
-                .getFolders()
-                .sort(Comparator.comparing(FileFolderInfo::getType));
-    }
+    @Autowired
+    private FshareService fshareService;
 }

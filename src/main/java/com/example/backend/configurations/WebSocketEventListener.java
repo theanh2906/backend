@@ -15,10 +15,6 @@ import java.util.Objects;
 
 @Component
 public class WebSocketEventListener {
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-    @Autowired
-    private SimpMessageSendingOperations messageSendingOperations;
-
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         logger.info("Received a new web socket connection");
@@ -39,4 +35,7 @@ public class WebSocketEventListener {
             messageSendingOperations.convertAndSend("/topic/public", chatMessage);
         }
     }
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
+    @Autowired
+    private SimpMessageSendingOperations messageSendingOperations;
 }

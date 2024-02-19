@@ -6,7 +6,6 @@ import com.example.backend.services.FileService;
 import com.example.backend.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,15 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/helpers")
 public class HelperController {
-    @Autowired
-    private FileService fileService;
-
-    @PostMapping("/encode-login")
-    public String encodeLogin(@RequestBody LoginRequest loginRequest) {
-        String json = Utils.stringifyJson(loginRequest);
-        return Utils.encodeBase64Str(json);
-    }
-
     @PostMapping("/encode")
     public ResponseEntity<ResponseDto<String>> encode(@RequestBody String string) {
         String encodedStr;
@@ -37,6 +27,12 @@ public class HelperController {
         }
     }
 
+    @PostMapping("/encode-login")
+    public String encodeLogin(@RequestBody LoginRequest loginRequest) {
+        String json = Utils.stringifyJson(loginRequest);
+        return Utils.encodeBase64Str(json);
+    }
+
     @PostMapping("/generate-json")
     public ResponseEntity<?> generateJson(@RequestParam("file") MultipartFile file) {
         try {
@@ -45,4 +41,7 @@ public class HelperController {
             return ResponseEntity.badRequest().body(new ResponseDto<>(false, e.getLocalizedMessage()));
         }
     }
+
+    @Autowired
+    private FileService fileService;
 }

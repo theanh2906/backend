@@ -1,25 +1,23 @@
 package com.example.backend.rest;
 
 import com.example.backend.dtos.ResponseDto;
-import com.example.backend.dtos.UserDto;
 import com.example.backend.models.User;
 import com.example.backend.repositories.UserRepository;
 import com.example.backend.services.BarcodeService;
 import com.example.backend.shared.Constant;
 import io.awspring.cloud.messaging.core.QueueMessagingTemplate;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -34,6 +32,11 @@ public class TestController {
     @GetMapping("/all")
     public String allAccess() {
         return "Public access";
+    }
+
+    @GetMapping("all-users")
+    public ResponseEntity<?> allUsers() {
+        return ResponseEntity.ok(userRepository.findAll());
     }
 
     @GetMapping("/users")
@@ -66,6 +69,7 @@ public class TestController {
             return ResponseEntity.badRequest().body(new ResponseDto<>(false, e.getLocalizedMessage()));
         }
     }
+
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     @Autowired
     private UserRepository repository;
@@ -75,9 +79,4 @@ public class TestController {
     private QueueMessagingTemplate messagingTemplate;
     @Autowired
     private UserRepository userRepository;
-
-    @GetMapping("all-users")
-    public ResponseEntity<?> allUsers() {
-        return ResponseEntity.ok(userRepository.findAll());
-    }
 }

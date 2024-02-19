@@ -2,7 +2,6 @@ package com.example.backend.mappers;
 
 import com.example.backend.dtos.EventDto;
 import com.example.backend.models.Event;
-import com.example.backend.utils.Utils;
 import org.springframework.beans.BeanUtils;
 
 public class EventMapper {

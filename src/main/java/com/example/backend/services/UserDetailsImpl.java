@@ -1,7 +1,6 @@
 package com.example.backend.services;
 
 import com.example.backend.models.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,16 +17,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
-    @Serial
-    private static final long serialVersionUID = 9121016901168667594L;
-    private String id;
-
-    private String username;
-
-    private String email;
-
-    private Collection<? extends GrantedAuthority> authorities;
-
     public UserDetailsImpl(String id, String username, String email, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
@@ -35,13 +24,16 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> authorities = user
-                .getRoles()
-                .stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .collect(Collectors.toList());
-        return new UserDetailsImpl(user.getId(), user.getUsername(), user.getEmail(), authorities);
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        UserDetailsImpl user = (UserDetailsImpl) obj;
+        return Objects.equals(id, user.id);
     }
 
     @Override
@@ -52,10 +44,6 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public String getPassword() {
         return null;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override
@@ -83,15 +71,22 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        UserDetailsImpl user = (UserDetailsImpl) obj;
-        return Objects.equals(id, user.id);
+    public String getEmail() {
+        return email;
+    }
+    @Serial
+    private static final long serialVersionUID = 9121016901168667594L;
+    private String id;
+    private String username;
+    private String email;
+    private Collection<? extends GrantedAuthority> authorities;
+
+    public static UserDetailsImpl build(User user) {
+        List<GrantedAuthority> authorities = user
+                .getRoles()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .collect(Collectors.toList());
+        return new UserDetailsImpl(user.getId(), user.getUsername(), user.getEmail(), authorities);
     }
 }

@@ -3,11 +3,8 @@ package com.example.backend.services;
 import com.example.backend.dtos.NoteDto;
 import com.example.backend.mappers.NoteMapper;
 import com.example.backend.models.Note;
-import com.example.backend.models.User;
 import com.example.backend.repositories.NoteRepository;
 import com.example.backend.repositories.UserRepository;
-import com.example.backend.shared.Constant;
-import com.example.backend.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +15,11 @@ import java.util.UUID;
 
 @Service
 public class NoteService {
-    public NoteDto addNote(NoteDto note) {
+    public NoteDto addNote(NoteDto note, Boolean isSynced) {
 //        User currentUser = SecurityUtils.getCurrentUser().toModel();
         final Note savedNote = NoteMapper.toModel(note);
         savedNote.setUser(null);
-        savedNote.setId(UUID.randomUUID().toString());
+        savedNote.setId(isSynced ? note.getId() : UUID.randomUUID().toString());
         savedNote.setTitle(note.getTitle());
         savedNote.setContent(note.getContent());
         savedNote.setCategories(null);
@@ -30,13 +27,13 @@ public class NoteService {
     }
 
     @Transactional
-    public Integer deleteNote(String id) {
-        return noteRepository.deleteNotes(id);
+    public void deleteAll() {
+        noteRepository.deleteAll();
     }
 
     @Transactional
-    public void deleteAll() {
-        noteRepository.deleteAll();
+    public Integer deleteNote(String id) {
+        return noteRepository.deleteNotes(id);
     }
 
     public List<Note> findAll() {

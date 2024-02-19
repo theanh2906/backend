@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SocketHandler extends TextWebSocketHandler {
-    List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) {
         sessions.add(session);
@@ -24,4 +22,5 @@ public class SocketHandler extends TextWebSocketHandler {
             }
         }
     }
+    List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
 }

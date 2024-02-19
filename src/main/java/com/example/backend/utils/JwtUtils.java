@@ -40,6 +40,7 @@ public class JwtUtils {
         Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
         return true;
     }
+
     private static final Logger LOG = LoggerFactory.getLogger(JwtUtils.class);
     @Value("${app.jwtSecret}")
     private String jwtSecret;

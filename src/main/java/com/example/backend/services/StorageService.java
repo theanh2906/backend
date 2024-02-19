@@ -26,10 +26,44 @@ import java.util.stream.Collectors;
 
 @Service
 public class StorageService {
-    public static final Logger LOGGER = LoggerFactory.getLogger(StorageService.class);
-    private final Path root = Paths.get("uploads");
-    @Autowired
-    private ImagesRepository imagesRepository;
+    @Transactional
+    public Boolean deleteAllImages() {
+        try {
+            imagesRepository.deleteAll();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public void deleteImage(String id) {
+        imagesRepository.deleteById(id);
+    }
+
+    public void downloadImage(int index, HttpServletResponse response) {
+        response.setContentType("image/jpeg");
+        try {
+            Images images = imagesRepository.findAll().get(index);
+            response.setHeader("Content-Disposition", String.format("attachment;filename=%s.jpg", images.getName()));
+            response.getOutputStream().write(images.getData());
+        } catch (Exception e) {
+            LOGGER.error("Could not download file {}", e.getLocalizedMessage());
+        }
+    }
+
+    public List<ImageDto> getAllImages() {
+        return imagesRepository.findAll().stream().map(ImageMapper::toDto).collect(Collectors.toList());
+    }
+
+    public String getImageBase64(int index) {
+        try {
+            Images images = imagesRepository.findAll().get(index);
+            return Utils.toBase64(images.getData());
+        } catch (Exception e) {
+            LOGGER.error("Could not get file {}", e.getLocalizedMessage());
+            return null;
+        }
+    }
 
     //    @PostConstruct
     public void init() {
@@ -39,16 +73,6 @@ public class StorageService {
             }
         } catch (IOException e) {
             LOGGER.error("Could not initialize storage {}", e.getLocalizedMessage());
-        }
-    }
-
-    public Boolean save(MultipartFile file) {
-        try {
-            Files.copy(file.getInputStream(), root.resolve(Objects.requireNonNull(file.getOriginalFilename())));
-            return true;
-        } catch (IOException e) {
-            LOGGER.error("Could not save file {}", e.getLocalizedMessage());
-            return false;
         }
     }
 
@@ -63,6 +87,16 @@ public class StorageService {
         } catch (IOException e) {
             LOGGER.error("Could not load file {}", e.getLocalizedMessage());
             throw new RuntimeException("Error: " + e.getLocalizedMessage());
+        }
+    }
+
+    public Boolean save(MultipartFile file) {
+        try {
+            Files.copy(file.getInputStream(), root.resolve(Objects.requireNonNull(file.getOriginalFilename())));
+            return true;
+        } catch (IOException e) {
+            LOGGER.error("Could not save file {}", e.getLocalizedMessage());
+            return false;
         }
     }
 
@@ -84,43 +118,8 @@ public class StorageService {
         }
         return null;
     }
-
-    public void downloadImage(int index, HttpServletResponse response) {
-        response.setContentType("image/jpeg");
-        try {
-            Images images = imagesRepository.findAll().get(index);
-            response.setHeader("Content-Disposition", String.format("attachment;filename=%s.jpg", images.getName()));
-            response.getOutputStream().write(images.getData());
-        } catch (Exception e) {
-            LOGGER.error("Could not download file {}", e.getLocalizedMessage());
-        }
-    }
-
-    public String getImageBase64(int index) {
-        try {
-            Images images = imagesRepository.findAll().get(index);
-            return Utils.toBase64(images.getData());
-        } catch (Exception e) {
-            LOGGER.error("Could not get file {}", e.getLocalizedMessage());
-            return null;
-        }
-    }
-
-    public List<ImageDto> getAllImages() {
-        return imagesRepository.findAll().stream().map(ImageMapper::toDto).collect(Collectors.toList());
-    }
-
-    public void deleteImage(String id) {
-        imagesRepository.deleteById(id);
-    }
-
-    @Transactional
-    public Boolean deleteAllImages() {
-        try {
-            imagesRepository.deleteAll();
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
+    public static final Logger LOGGER = LoggerFactory.getLogger(StorageService.class);
+    private final Path root = Paths.get("uploads");
+    @Autowired
+    private ImagesRepository imagesRepository;
 }

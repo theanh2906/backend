@@ -13,10 +13,6 @@ import java.util.Collections;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleService roleService;
     public UserDto addUser(FirebaseUser user) {
         User addedUser = UserMapper.toModel(user);
         addedUser.setRoles(Collections.singleton(roleService.findById(Constant.Role.USER)));
@@ -28,4 +24,8 @@ public class UserService {
                 .username(result.getUsername())
                 .build();
     }
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleService roleService;
 }

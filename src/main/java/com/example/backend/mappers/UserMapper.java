@@ -4,7 +4,6 @@ import com.example.backend.dtos.FirebaseUser;
 import com.example.backend.dtos.SignupRequest;
 import com.example.backend.dtos.UserDto;
 import com.example.backend.models.Role;
-import com.example.backend.models.RoleEnum;
 import com.example.backend.models.User;
 import com.example.backend.services.UserDetailsImpl;
 import org.springframework.beans.BeanUtils;

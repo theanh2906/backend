@@ -38,6 +38,7 @@ public class RoleController {
         LOG.error("Getting role with ID {}.", roleId);
         return roleService.findById(roleId);
     }
+
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     @Autowired
     private RoleService roleService;

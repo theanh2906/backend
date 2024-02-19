@@ -1,6 +1,7 @@
 package com.example.backend.services;
 
 import com.example.backend.utils.Utils;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -38,7 +38,36 @@ import java.util.zip.ZipOutputStream;
 @Service
 public class WebCrawlerService {
 
-    private final Logger LOG = LoggerFactory.getLogger(getClass());
+    public void downloadImages(Map<String, String> params, HttpServletResponse response) {
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition", "attachment;filename=File.zip");
+        try {
+            AtomicInteger i = new AtomicInteger();
+            if (!Files.exists(Path.of("./images"))) {
+                Utils.createDirectory("./images");
+            }
+            findImageLinks(params.get("url"), params.get("selector"), params.get("imageAttribute")).forEach(link -> {
+                try {
+                    FileUtils.copyURLToFile(new URL(link), new File("./images/" + i + ".jpg"), 20000, 20000);
+                    i.getAndIncrement();
+                } catch (Exception e) {
+                    LOG.error(e.getMessage());
+                }
+            });
+            List<String> allFiles = new ArrayList<>();
+            Stream.of(Objects.requireNonNull(new File("./images").listFiles())).forEach(file -> {
+                allFiles.add(file.getPath());
+            });
+            zipping("./images");
+            byte[] byteArr = FileUtils.readFileToByteArray(new File("./images/File.zip"));
+            InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(byteArr));
+            FileCopyUtils.copy(inputStream, response.getOutputStream());
+            FileUtils.deleteDirectory(new File("./images"));
+            IOUtils.closeQuietly(response.getOutputStream());
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+        }
+    }
 
     public List<String> findImageLinks(String url, String selector, String imageAttribute) {
         try {
@@ -81,35 +110,62 @@ public class WebCrawlerService {
         return null;
     }
 
-    public void downloadImages(Map<String, String> params, HttpServletResponse response) {
-        response.setContentType("application/zip");
-        response.setHeader("Content-Disposition", "attachment;filename=File.zip");
+    private void zipping(String folderPath) {
         try {
-            AtomicInteger i = new AtomicInteger();
-            if (!Files.exists(Path.of("./images"))) {
-                Utils.createDirectory("./images");
-            }
-            findImageLinks(params.get("url"), params.get("selector"), params.get("imageAttribute")).forEach(link -> {
-                try {
-                    FileUtils.copyURLToFile(new URL(link), new File("./images/" + i + ".jpg"), 20000, 20000);
-                    i.getAndIncrement();
-                } catch (Exception e) {
-                    LOG.error(e.getMessage());
-                }
-            });
             List<String> allFiles = new ArrayList<>();
-            Stream.of(Objects.requireNonNull(new File("./images").listFiles())).forEach(file -> {
+            Stream.of(Objects.requireNonNull(new File(folderPath).listFiles())).forEach(file -> {
                 allFiles.add(file.getPath());
             });
-            zipping("./images");
-            byte[] byteArr = FileUtils.readFileToByteArray(new File("./images/File.zip"));
-            InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(byteArr));
-            FileCopyUtils.copy(inputStream, response.getOutputStream());
-            FileUtils.deleteDirectory(new File("./images"));
-            IOUtils.closeQuietly(response.getOutputStream());
+            FileOutputStream fos = new FileOutputStream(folderPath + "/File.zip");
+            ZipOutputStream zipOutputStream = new ZipOutputStream(fos);
+            allFiles.forEach(path -> {
+                try {
+                    final ZipEntry ze = new ZipEntry(path.substring(path.lastIndexOf("\\") + 1));
+                    if (!ze.getName().contains(".zip")) {
+                        zipOutputStream.putNextEntry(ze);
+                        zipOutputStream.write(Files.readAllBytes(Path.of(path)));
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            zipOutputStream.closeEntry();
+            zipOutputStream.finish();
+            zipOutputStream.flush();
+            IOUtils.closeQuietly(zipOutputStream);
+//            return Files.readAllBytes(Path.of(folderPath + "/File.zip"));
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+//            return new byte[0];
+        }
+    }
+
+    public List<String> getLinks(String url, Integer size, String selector, String imageSelector, String imageAttribute) {
+        List<String> links = new ArrayList<>();
+        List<String> imageLinks = new ArrayList<>();
+        try {
+            for (int i = 1; i <= size; i++) {
+                Document document = Jsoup
+                        .connect(url + "/page/" + i)
+                        .userAgent("client")
+                        .timeout(20000)
+                        .get();
+                links.addAll(document
+                        .select(selector != null && !selector.isEmpty() ? selector : "a")
+                        .eachAttr("href"));
+            }
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }
+        links.forEach(link -> {
+            imageLinks.addAll(findImageLinks(link, imageSelector, imageAttribute));
+            Map<String, String> params = new HashMap<>();
+            params.put("url", link);
+            params.put("selector", imageSelector);
+            saveImages(params);
+        });
+//        zipping(imageLinks, "./images");
+        return new ArrayList<>();
     }
 
     public void saveImages(Map<String, String> params) {
@@ -151,64 +207,6 @@ public class WebCrawlerService {
         }
     }
 
-    public List<String> getLinks(String url, Integer size, String selector, String imageSelector, String imageAttribute) {
-        List<String> links = new ArrayList<>();
-        List<String> imageLinks = new ArrayList<>();
-        try {
-            for (int i = 1; i <= size; i++) {
-                Document document = Jsoup
-                        .connect(url + "/page/" + i)
-                        .userAgent("client")
-                        .timeout(20000)
-                        .get();
-                links.addAll(document
-                        .select(selector != null && !selector.isEmpty() ? selector : "a")
-                        .eachAttr("href"));
-            }
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-        }
-        links.forEach(link -> {
-            imageLinks.addAll(findImageLinks(link, imageSelector, imageAttribute));
-            Map<String, String> params = new HashMap<>();
-            params.put("url", link);
-            params.put("selector", imageSelector);
-            saveImages(params);
-        });
-//        zipping(imageLinks, "./images");
-        return new ArrayList<>();
-    }
-
-    private void zipping(String folderPath) {
-        try {
-            List<String> allFiles = new ArrayList<>();
-            Stream.of(Objects.requireNonNull(new File(folderPath).listFiles())).forEach(file -> {
-                allFiles.add(file.getPath());
-            });
-            FileOutputStream fos = new FileOutputStream(folderPath + "/File.zip");
-            ZipOutputStream zipOutputStream = new ZipOutputStream(fos);
-            allFiles.forEach(path -> {
-                try {
-                    final ZipEntry ze = new ZipEntry(path.substring(path.lastIndexOf("\\") + 1));
-                    if (!ze.getName().contains(".zip")) {
-                        zipOutputStream.putNextEntry(ze);
-                        zipOutputStream.write(Files.readAllBytes(Path.of(path)));
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            zipOutputStream.closeEntry();
-            zipOutputStream.finish();
-            zipOutputStream.flush();
-            IOUtils.closeQuietly(zipOutputStream);
-//            return Files.readAllBytes(Path.of(folderPath + "/File.zip"));
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-//            return new byte[0];
-        }
-    }
-
     public List<String> getText(String url, Integer size, String selector) {
         List<String> results = new ArrayList<>();
         try {
@@ -225,4 +223,5 @@ public class WebCrawlerService {
         }
         return results;
     }
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
 }

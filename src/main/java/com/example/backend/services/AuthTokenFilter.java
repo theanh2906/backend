@@ -19,14 +19,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
-    private static final Logger LOG = LoggerFactory.getLogger(AuthTokenFilter.class);
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, JwtException, IOException {
         try {
@@ -52,4 +44,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
         return null;
     }
+    private static final Logger LOG = LoggerFactory.getLogger(AuthTokenFilter.class);
+    @Autowired
+    private JwtUtils jwtUtils;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 }

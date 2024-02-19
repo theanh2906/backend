@@ -12,13 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public class XLSUtils {
-    public static void writeHeaderRow(Row headerRow, Class<? extends TableModel> clazz) throws Exception {
-        List<String> headerList = clazz.getConstructor().newInstance().getHeader();
-        headerList.forEach(each -> {
-            headerRow.createCell(headerList.indexOf(each)).setCellValue(each);
-        });
-    }
-
     public static Workbook writeExcel(List<? extends TableModel> listObjects, Class<? extends TableModel> clazz) {
         try {
             Workbook workbook = new XSSFWorkbook();
@@ -48,5 +41,12 @@ public class XLSUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static void writeHeaderRow(Row headerRow, Class<? extends TableModel> clazz) throws Exception {
+        List<String> headerList = clazz.getConstructor().newInstance().getHeader();
+        headerList.forEach(each -> {
+            headerRow.createCell(headerList.indexOf(each)).setCellValue(each);
+        });
     }
 }

@@ -25,10 +25,6 @@ import java.util.Objects;
 
 @Service
 public class FshareService {
-    private final WebClient webClient = WebClient.create();
-    protected String sessionId;
-    protected String token;
-
     public Flux<FileFolderInfo> getFolders() {
         Map<String, Object> params = new HashMap<>();
         params.put("pageIndex", 0);
@@ -157,4 +153,7 @@ public class FshareService {
         uploadRequest.setToken(token);
         return Mono.just(uploadRequest);
     }
+    private final WebClient webClient = WebClient.create();
+    protected String sessionId;
+    protected String token;
 }

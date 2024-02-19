@@ -11,11 +11,12 @@ import com.example.backend.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -35,13 +36,12 @@ public class EventController {
     @PostMapping("/new")
     public ResponseEntity<?> addEvent(@RequestBody Event event) throws Exception {
         UserDto currentUser = SecurityUtils.getCurrentUser();
-        return ResponseEntity.ok(eventService.addEvent(event, currentUser.getId()));
+        return ResponseEntity.ok(eventService.addEvent(event, false));
     }
 
     @Operation(summary = "Find all events")
     @GetMapping("")
     public List<EventDto> findAll() {
-        UserDto currentUser = SecurityUtils.getCurrentUser();
         return eventService.findAll()
                 .stream()
                 .map(EventMapper::toDto)
@@ -67,10 +67,9 @@ public class EventController {
             }));
             return Flux.fromIterable(listEvents);
         });
-        eventService.deleteAll();
         response.flatMap((each) -> {
             try {
-                eventService.addEvent(EventMapper.toModel(each), Constant.ADMIN_ID);
+                eventService.addEvent(EventMapper.toModel(each), true);
             } catch (Exception e) {
                 return Flux.error(new RuntimeException(e));
             }
@@ -82,6 +81,16 @@ public class EventController {
     @GetMapping("/sync")
     public ResponseEntity<?> syncCalender() {
         return ResponseEntity.ok(null);
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteEvents(@RequestBody List<String> eventIds) {
+        try {
+            eventService.deleteEvents(eventIds);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @Autowired

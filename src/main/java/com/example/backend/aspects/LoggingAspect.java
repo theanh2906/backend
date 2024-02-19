@@ -11,26 +11,23 @@ import org.slf4j.LoggerFactory;
 
 @Aspect
 public class LoggingAspect {
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-
-    @Pointcut("execution(* com.example.backend.*.*.*(..))")
-    public void serviceMethods() {
-    }
-
     @AfterReturning(pointcut = "serviceMethods()", returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
         LOG.info("Exiting method: " + joinPoint.getSignature().getName() + " with result: " + result);
-        ;
-    }
-
-    @Before("execution(* com.example.backend.*.*.*(..))")
-    public void logBeforeExecuting(JoinPoint joinPoint) {
-        LOG.info("Executing method: " + joinPoint.getSignature().getName());
-        ;
     }
 
     @AfterThrowing(pointcut = "serviceMethods()", throwing = "ex")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable ex) {
         LOG.error("Exception in method: " + joinPoint.getSignature().getName() + " with exception: " + ex.getMessage());
     }
+
+    @Before("execution(* com.example.backend.*.*.*(..))")
+    public void logBeforeExecuting(JoinPoint joinPoint) {
+        LOG.info("Executing method: " + joinPoint.getSignature().getName());
+    }
+
+    @Pointcut("execution(* com.example.backend.*.*.*(..))")
+    public void serviceMethods() {
+    }
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 }

@@ -22,8 +22,6 @@ import java.util.Map;
 
 @Service
 public class FileService {
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-
     public List<Map<String, Object>> parseJson(MultipartFile multipartFile) {
         List<Map<String, Object>> listDocuments = new ArrayList<>();
         try {
@@ -55,4 +53,5 @@ public class FileService {
         }
         return listDocuments;
     }
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 }

@@ -1,6 +1,10 @@
 package com.example.backend.rest;
 
-import com.example.backend.dtos.*;
+import com.example.backend.dtos.FirebaseUser;
+import com.example.backend.dtos.JwtResponse;
+import com.example.backend.dtos.LoginRequest;
+import com.example.backend.dtos.ResponseDto;
+import com.example.backend.dtos.SignupRequest;
 import com.example.backend.mappers.UserMapper;
 import com.example.backend.models.Role;
 import com.example.backend.models.RoleEnum;
@@ -12,10 +16,12 @@ import com.example.backend.services.UserService;
 import com.example.backend.utils.JwtUtils;
 import com.example.backend.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,16 +30,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,8 +44,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    @Autowired
-    private UserService userService;
+    @PostMapping("add-user")
+    public ResponseEntity<?> addUserInDb(@RequestBody FirebaseUser user) {
+        return ResponseEntity.ok(userService.addUser(user));
+    }
+
     /**
      * Method to authenticate login request
      *
@@ -98,12 +103,9 @@ public class AuthController {
         }
     }
 
-    @PostMapping("add-user")
-    public ResponseEntity<?> addUserInDb(@RequestBody FirebaseUser user) {
-        return ResponseEntity.ok(userService.addUser(user));
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);
+    @Autowired
+    private UserService userService;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired

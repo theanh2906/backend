@@ -8,9 +8,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ChatRoomService {
-    @Autowired
-    private ChatRoomRepository repository;
-
     public ChatRoom createRoom(String name) {
         ChatRoom saveRoom = new ChatRoom();
         if (repository.findByNameIgnoreCase(name).isPresent()) {
@@ -18,4 +15,6 @@ public class ChatRoomService {
         }
         return repository.save(ChatRoom.builder().name(name).build());
     }
+    @Autowired
+    private ChatRoomRepository repository;
 }
