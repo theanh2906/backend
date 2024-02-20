@@ -1,5 +1,6 @@
 package com.example.backend.services;
 
+import com.example.backend.dtos.EventDto;
 import com.example.backend.models.Event;
 import com.example.backend.repositories.EventRepository;
 import com.example.backend.repositories.UserRepository;
@@ -12,10 +13,15 @@ import java.util.UUID;
 
 @Service
 public class EventService {
-    public Event addEvent(Event event, Boolean isSynced) throws Exception {
-        event.setId(isSynced ? event.getId() : UUID.randomUUID().toString());
-        event.setUser(null);
-        return eventRepository.save(event);
+    public Event save(EventDto event, Boolean isSynced) throws Exception {
+        final Event addedEvent = new Event();
+        addedEvent.setId(isSynced || event.getId() != null ? event.getId() : UUID.randomUUID().toString());
+        addedEvent.setUser(null);
+        addedEvent.setStart(event.getStart());
+        addedEvent.setEnd(event.getEnd());
+        addedEvent.setTitle(event.getTitle());
+        addedEvent.setAllDay(event.getAllDay());
+        return eventRepository.save(addedEvent);
     }
 
     @Transactional
@@ -35,6 +41,7 @@ public class EventService {
     public List<Event> findAllByUser(String userId) {
         return eventRepository.findAllByUser(userId);
     }
+
     @Autowired
     private UserRepository userRepository;
     @Autowired

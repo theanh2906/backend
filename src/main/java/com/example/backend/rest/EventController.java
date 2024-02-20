@@ -1,22 +1,20 @@
 package com.example.backend.rest;
 
 import com.example.backend.dtos.EventDto;
-import com.example.backend.dtos.UserDto;
 import com.example.backend.mappers.EventMapper;
-import com.example.backend.models.Event;
 import com.example.backend.repositories.UserRepository;
 import com.example.backend.services.EventService;
 import com.example.backend.shared.Constant;
-import com.example.backend.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -34,9 +32,8 @@ import java.util.stream.Collectors;
 public class EventController {
     @Operation(summary = "Add new event")
     @PostMapping("/new")
-    public ResponseEntity<?> addEvent(@RequestBody Event event) throws Exception {
-        UserDto currentUser = SecurityUtils.getCurrentUser();
-        return ResponseEntity.ok(eventService.addEvent(event, false));
+    public ResponseEntity<?> addEvent(@RequestBody EventDto event) throws Exception {
+        return ResponseEntity.ok(eventService.save(event, false));
     }
 
     @Operation(summary = "Find all events")
@@ -69,7 +66,7 @@ public class EventController {
         });
         response.flatMap((each) -> {
             try {
-                eventService.addEvent(EventMapper.toModel(each), true);
+                eventService.save(each, true);
             } catch (Exception e) {
                 return Flux.error(new RuntimeException(e));
             }
@@ -88,6 +85,15 @@ public class EventController {
         try {
             eventService.deleteEvents(eventIds);
             return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("")
+    public ResponseEntity<?> editEvent(@RequestBody EventDto event) {
+        try {
+            return ResponseEntity.ok(eventService.save(event, false));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
