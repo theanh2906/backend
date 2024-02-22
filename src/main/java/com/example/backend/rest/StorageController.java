@@ -75,7 +75,7 @@ public class StorageController {
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile[] file) {
         try {
             Arrays.stream(file).forEach(storageService::save);
-            return new ResponseEntity<>("Successfully upload ", HttpStatus.ACCEPTED);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return new ResponseEntity<>(String.format("Failed to upload. Error: %s", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -87,6 +87,15 @@ public class StorageController {
             return ResponseEntity.ok().body(storageService.uploadImages(file));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(String.format("Failed to upload. Error: %s", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/files")
+    public ResponseEntity<?> getAllFiles() {
+        try {
+            return ResponseEntity.ok().body(storageService.getAllFiles());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 

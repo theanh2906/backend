@@ -19,11 +19,15 @@ import java.util.Map;
 @RequestMapping("/api/web-crawler")
 public class WebCrawlerController {
     @GetMapping("/download-images")
-    public ResponseEntity<?> downloadImages(@RequestParam String url, @RequestParam String selector, final HttpServletResponse response) {
+    public ResponseEntity<?> downloadImages(@RequestParam String url,
+                                            @RequestParam String selector,
+                                            @RequestParam String imageAttribute,
+                                            final HttpServletResponse response) {
         try {
             Map<String, String> params = new HashMap<>();
             params.put("url", url);
             params.put("selector", selector);
+            params.put("imageAttribute", imageAttribute);
             webCrawlerService.downloadImages(params, response);
             return ResponseEntity.ok("Downloading...");
         } catch (Exception e) {
@@ -52,6 +56,18 @@ public class WebCrawlerController {
         List<String> results = new ArrayList<>();
         try {
             results = webCrawlerService.getText(url, size, selector);
+            return results;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return results;
+    }
+
+    @GetMapping("/text")
+    public List<String> getText(@RequestParam String url, @RequestParam String selector) {
+        List<String> results = new ArrayList<>();
+        try {
+            results = webCrawlerService.getText(url, selector);
             return results;
         } catch (Exception e) {
             e.printStackTrace();

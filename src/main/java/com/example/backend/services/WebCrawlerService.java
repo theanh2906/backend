@@ -81,7 +81,7 @@ public class WebCrawlerService {
                     .eachAttr(imageAttribute != null && !imageAttribute.isEmpty() ? imageAttribute : "src")
                     .stream().map(each -> Arrays.stream(each.split(",")).map(String::trim).collect(Collectors.toList()))
                     .flatMap(Collection::stream)
-                    .collect(Collectors.toList())
+                    .toList()
                     .stream()
                     .filter(link -> !link.startsWith("data:") && !link.contains(".png"))
                     .map(link -> {
@@ -218,6 +218,21 @@ public class WebCrawlerService {
                         .get();
                 results.addAll(document.select(selector).eachText());
             }
+        } catch (IOException e) {
+            LOG.error(e.getMessage());
+        }
+        return results;
+    }
+
+    public List<String> getText(String url, String selector) {
+        List<String> results = new ArrayList<>();
+        try {
+            Document document = Jsoup
+                    .connect(url)
+                    .userAgent("client")
+                    .timeout(20000)
+                    .get();
+            results.addAll(document.select(selector).eachText());
         } catch (IOException e) {
             LOG.error(e.getMessage());
         }

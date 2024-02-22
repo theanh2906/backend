@@ -1,20 +1,24 @@
 package com.example.backend.services;
 
+import com.example.backend.dtos.FileDto;
 import com.example.backend.dtos.ImageDto;
 import com.example.backend.mappers.ImageMapper;
 import com.example.backend.models.Images;
 import com.example.backend.repositories.ImagesRepository;
 import com.example.backend.utils.Utils;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class StorageService {
@@ -51,6 +56,22 @@ public class StorageService {
         }
     }
 
+    public List<FileDto> getAllFiles() {
+        List<FileDto> result = new ArrayList<>();
+        File[] listFile = Objects.requireNonNull(new File(getUploadFolder).listFiles());
+        if (listFile.length > 0) {
+            Stream.of(listFile).forEach(file -> {
+                final FileDto f = new FileDto();
+                f.setName(file.getName());
+                f.setUploadedDate(file.lastModified());
+                String[] fileName = file.getName().split("\\.");
+                f.setExtension(fileName[fileName.length - 1].toLowerCase());
+                result.add(f);
+            });
+        }
+        return result;
+    }
+
     public List<ImageDto> getAllImages() {
         return imagesRepository.findAll().stream().map(ImageMapper::toDto).collect(Collectors.toList());
     }
@@ -65,8 +86,9 @@ public class StorageService {
         }
     }
 
-    //    @PostConstruct
+    @PostConstruct
     public void init() {
+        root = Paths.get(getUploadFolder);
         try {
             if (Files.notExists(root)) {
                 Files.createDirectory(root);
@@ -92,9 +114,14 @@ public class StorageService {
 
     public Boolean save(MultipartFile file) {
         try {
+            Path targetPath = root.resolve(Objects.requireNonNull(file.getOriginalFilename()));
+            if (Files.exists(targetPath)) {
+                Files.delete(targetPath);
+            }
             Files.copy(file.getInputStream(), root.resolve(Objects.requireNonNull(file.getOriginalFilename())));
             return true;
         } catch (IOException e) {
+            e.printStackTrace();
             LOGGER.error("Could not save file {}", e.getLocalizedMessage());
             return false;
         }
@@ -119,7 +146,9 @@ public class StorageService {
         return null;
     }
     public static final Logger LOGGER = LoggerFactory.getLogger(StorageService.class);
-    private final Path root = Paths.get("uploads");
+    private Path root = null;
     @Autowired
     private ImagesRepository imagesRepository;
+    @Autowired
+    private String getUploadFolder;
 }

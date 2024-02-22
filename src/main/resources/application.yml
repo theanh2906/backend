@@ -22,8 +22,8 @@ spring:
   #        port: 6379
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
+      max-file-size: 1024MB
+      max-request-size: 1024MB
 #    rabbitmq:
 #        host: localhost
 #        port: 5672
@@ -33,3 +33,4 @@ springdoc:
     path: /api-docs
   swagger-ui:
     operations-sorter: method
+upload-folder: uploads

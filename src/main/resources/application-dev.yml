@@ -21,3 +21,4 @@ spring:
         validator:
           apply_to_ddl: false
     show-sql: false
+upload-folder: uploads
