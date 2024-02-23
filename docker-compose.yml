@@ -29,7 +29,7 @@ services:
     image: theanh2906/backend
     container_name: backend
     volumes:
-      - type=bind,source=/home/theanh2906/Desktop/uploads,target=/uploads
+      - type=bind,source=/home/theanh2906/Desktop/uploads:/uploads
     network_mode: host
     ports:
       - "8081:8081"
