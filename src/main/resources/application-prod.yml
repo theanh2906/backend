@@ -28,4 +28,4 @@ spring:
     jdbc:
       initialize-schema: always
     store-type: jdbc
-upload-folder: ~/Desktop/uploads
+upload-folder: /home/theanh2906/Desktop/uploads
