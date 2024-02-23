@@ -96,7 +96,7 @@ public class StorageController {
         try {
             return ResponseEntity.ok().body(storageService.getAllFiles());
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(String.format("Failed to fetch files. Error: %s", e.getMessage()));
         }
     }
 
