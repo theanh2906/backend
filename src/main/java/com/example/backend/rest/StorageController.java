@@ -1,6 +1,7 @@
 package com.example.backend.rest;
 
 import com.example.backend.dtos.ImageDto;
+import com.example.backend.dtos.ResponseDto;
 import com.example.backend.services.StorageService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,12 +73,12 @@ public class StorageController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile[] file) {
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile[] file) {
         try {
             Arrays.stream(file).forEach(storageService::save);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return new ResponseEntity<>(String.format("Failed to upload. Error: %s", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().body(new ResponseDto<>(String.format("Failed to upload. Error: %s", e.getMessage(), false)));
         }
     }
 
