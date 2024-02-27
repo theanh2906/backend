@@ -23,6 +23,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,6 @@ public class NoteController {
                 .findAll()
                 .stream()
                 .map(NoteMapper::toDto)
-//                .sorted(Comparator.comparing(NoteDto::getCreatedDate))
                 .collect(Collectors.toList());
     }
 

@@ -20,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,6 +47,16 @@ public class StorageService {
         imagesRepository.deleteById(id);
     }
 
+    public void downloadFile(String encodedPath, HttpServletResponse response) {
+        try {
+            String decodedPath = Utils.decodeBase64Str(encodedPath);
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", String.format("attachment;filename=%s", encodedPath));
+        } catch (Exception ignore) {
+
+        }
+    }
+
     public void downloadImage(int index, HttpServletResponse response) {
         response.setContentType("image/jpeg");
         try {
@@ -66,6 +78,11 @@ public class StorageService {
                 f.setUploadedDate(file.lastModified());
                 String[] fileName = file.getName().split("\\.");
                 f.setExtension(fileName[fileName.length - 1].toLowerCase());
+                try {
+                    f.setSize(Files.size(Paths.get(file.getPath())));
+                } catch (Exception ignored) {
+                }
+                f.setPath(file.getAbsolutePath().replaceAll("\\\\", "/"));
                 result.add(f);
             });
         }

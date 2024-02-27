@@ -8,4 +8,6 @@ public class FileDto {
     private String name;
     private String extension;
     private Long uploadedDate;
+    private Long size;
+    private String path;
 }

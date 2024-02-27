@@ -12,6 +12,10 @@ import java.util.Map;
 
 public class Utils {
 
+    private static final long BYTES_IN_KB = 1024;
+    private static final long BYTES_IN_MB = BYTES_IN_KB * BYTES_IN_KB;
+    private static final long BYTES_IN_GB = BYTES_IN_MB * BYTES_IN_KB;
+
     public static String encodeBase64Str(String json) {
         return Base64.getEncoder().encodeToString(json.getBytes());
     }
@@ -121,5 +125,25 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String convertFileSize(Long fileSize) {
+        if ((fileSize / BYTES_IN_KB) > BYTES_IN_KB) {
+            return convertToMB(fileSize);
+        } else if ((fileSize / BYTES_IN_MB) > BYTES_IN_MB) {
+            return convertToGB(fileSize);
+        } else return convertToKB(fileSize);
+    }
+
+    public static String convertToKB(Long fileSize) {
+        return String.valueOf(Math.round((double) fileSize / BYTES_IN_KB)).concat("KB");
+    }
+
+    public static String convertToMB(Long fileSize) {
+        return String.valueOf(Math.round((double) fileSize / BYTES_IN_MB)).concat("MB");
+    }
+
+    public static String convertToGB(Long fileSize) {
+        return String.valueOf(Math.floor((double) fileSize / BYTES_IN_GB)).concat("GB");
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +38,11 @@ public class NoteService {
     }
 
     public List<Note> findAll() {
-        return noteRepository.findAll();
+        return noteRepository
+                .findAll()
+                .stream()
+                .sorted(Comparator.comparing(Note::getCreatedDate).reversed())
+                .toList();
     }
 
     @Transactional
