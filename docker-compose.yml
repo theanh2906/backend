@@ -29,7 +29,7 @@ services:
     image: theanh2906/backend
     container_name: backend
     volumes:
-      - uploads:/uploads:rw
+      - uploads:/app/uploads:rw
     network_mode: host
     ports:
       - "8081:8081"
