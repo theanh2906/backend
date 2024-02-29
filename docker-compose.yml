@@ -29,7 +29,7 @@ services:
     image: theanh2906/backend
     container_name: backend
     volumes:
-      - uploads:/uploads
+      - uploads:/uploads:rw
     network_mode: host
     ports:
       - "8081:8081"
@@ -42,3 +42,4 @@ services:
 volumes:
   postgres-data:
   uploads:
+    driver: local
