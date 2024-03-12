@@ -56,6 +56,7 @@ public class NoteController {
                 .findAll()
                 .stream()
                 .map(NoteMapper::toDto)
+                .sorted(Comparator.comparingInt(a -> ((Long) a.getCreatedDate()).intValue()))
                 .collect(Collectors.toList());
     }
 
