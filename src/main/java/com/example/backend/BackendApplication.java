@@ -1,9 +1,11 @@
 package com.example.backend;
 
+import com.example.backend.services.AzureService;
 import com.example.backend.shared.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -15,9 +17,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EnableCaching
-public class BackendApplication extends SpringBootServletInitializer implements WebMvcConfigurer {
+public class BackendApplication extends SpringBootServletInitializer implements WebMvcConfigurer, CommandLineRunner {
+    @Override
+    public void run(String... args) throws Exception {
+        azureService.getUserInfo();
+    }
+
     @Autowired
     public Environment environment;
+    @Autowired
+    private AzureService azureService;
     @Bean
     public String uploadFolder() {
         return environment.getProperty("upload-folder");

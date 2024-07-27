@@ -97,4 +97,13 @@ public class Constant {
         public static final long USER = 3;
         public static final long ADMIN = 1;
     }
+
+    public static class Azure {
+        public static final String CLIENT_SECRET = "7ry8Q~jqQC1FL1R6V5.wh.rx7kZRG6dv-G-hOdhx";
+        public static final String TENANT_ID = "90d076c5-6610-4955-bccd-4f99ae488ef0";
+//        public static final String CLIENT_ID = "48447683-68aa-45c3-beac-c613aee85234";
+        public static final String CLIENT_ID = "48447683-68aa-45c3-beac-c613aee85234";
+        public static final String[] SCOPES = new String[] { "openid", "email", "profile", "offline_access", "User.Read", ".default" };
+        public static final String[] ALLOWED_HOSTS = new String[] { "localhost" };
+    }
 }

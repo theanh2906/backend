@@ -1,7 +1,15 @@
 package com.example.backend.configurations;
 
+import com.azure.core.credential.TokenCredential;
+import com.azure.identity.ClientSecretCredential;
+import com.azure.identity.ClientSecretCredentialBuilder;
+import com.azure.identity.DefaultAzureCredential;
 import com.example.backend.services.CustomOAuth2UserService;
 import com.example.backend.services.UserDetailsServiceImpl;
+import com.example.backend.shared.Constant;
+import com.microsoft.graph.core.authentication.AzureIdentityAuthenticationProvider;
+import com.microsoft.graph.serviceclient.GraphServiceClient;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +25,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class MyWebSecurityConfiguration {
@@ -31,6 +41,25 @@ public class MyWebSecurityConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AzureIdentityAuthenticationProvider authenticationProvider() {
+        return new AzureIdentityAuthenticationProvider(tokenCredential(), Constant.Azure.ALLOWED_HOSTS, Constant.Azure.SCOPES);
+    }
+
+    @Bean
+    public GraphServiceClient graphServiceClient() {
+        return new GraphServiceClient(authenticationProvider());
+    }
+
+    @Bean
+    public TokenCredential tokenCredential() {
+        return new ClientSecretCredentialBuilder()
+                .clientId(Constant.Azure.CLIENT_ID)
+                .clientSecret(Constant.Azure.CLIENT_SECRET)
+                .tenantId(Constant.Azure.TENANT_ID)
+                .build();
     }
 
     @Bean
