@@ -1,6 +1,7 @@
 {
   "IsEncrypted": false,
   "Values": {
+    "AzureWebJobsStorage__accountName": "theanh2906",
     "AzureWebJobsSecretStorageType": "files",
     "FUNCTIONS_WORKER_RUNTIME": "java",
     "FUNCTIONS_EXTENSION_VERSION": "~4",
