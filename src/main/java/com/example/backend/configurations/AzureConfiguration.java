@@ -2,6 +2,7 @@ package com.example.backend.configurations;
 
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
+import com.azure.spring.cloud.autoconfigure.implementation.context.AzureTokenCredentialAutoConfiguration;
 import com.example.backend.shared.Constant;
 import com.microsoft.graph.core.authentication.AzureIdentityAuthenticationProvider;
 import com.microsoft.graph.serviceclient.GraphServiceClient;
@@ -28,4 +29,5 @@ public class AzureConfiguration {
                 .tenantId(Constant.Azure.TENANT_ID)
                 .build();
     }
+
 }

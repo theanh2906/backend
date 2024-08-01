@@ -16,7 +16,6 @@ public class AzureService {
     }
 
     public void getUserInfo() {
-        UsersRequestBuilder users = client.users();
-        UserCollectionResponse userCol = users.get();
+        client.me().authentication().get();
     }
 }
