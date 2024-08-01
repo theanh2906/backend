@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Component
 public class AzureHandler {
-    @FunctionName("hello")
+    @FunctionName("useful-tools")
     public HttpResponseMessage execute(
             @HttpTrigger(name = "request", methods = {HttpMethod.GET, HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<User>> request, ExecutionContext context) {
         User user = request.getBody()
