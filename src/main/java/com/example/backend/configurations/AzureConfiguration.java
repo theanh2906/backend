@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 @Configuration
 public class AzureConfiguration {
@@ -40,5 +41,15 @@ public class AzureConfiguration {
                 .clientSecret(Constant.Azure.CLIENT_SECRET)
                 .tenantId(Constant.Azure.TENANT_ID)
                 .build();
+    }
+
+    @Bean
+    public Function<String, String> uppercase() {
+        return payload -> payload.toUpperCase();
+    }
+
+    @Bean
+    public Function<String, String> reverse() {
+        return payload -> new StringBuilder(payload).reverse().toString();
     }
 }
