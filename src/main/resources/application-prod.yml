@@ -4,7 +4,7 @@ spring:
   datasource:
     hikari:
       schema: public
-    password: BenNa1402*
+    password: admin
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
   flyway:

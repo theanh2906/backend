@@ -17,10 +17,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@SpringBootApplication(exclude = {
-        DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class
-})
+@SpringBootApplication
 @EnableCaching
 public class BackendApplication extends SpringBootServletInitializer implements WebMvcConfigurer, CommandLineRunner {
     @Override
