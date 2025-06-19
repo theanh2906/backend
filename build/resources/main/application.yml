@@ -1,0 +1,44 @@
+app:
+  jwtExpiration: 600
+  jwtSecret: appSecretKey
+management:
+  endpoint:
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+spring:
+  cloud:
+    azure:
+      credential:
+        client-id: 48447683-68aa-45c3-beac-c613aee85234
+        client-secret: 7ry8Q~jqQC1FL1R6V5.wh.rx7kZRG6dv-G-hOdhx
+        username: theanh2906@outlook.com
+        password: Heoyeutho14022015*
+        managed-identity-enabled: true
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  #    cache:
+  #        type: redis
+  profiles:
+    active: prod
+  #    redis:
+  #        host: localhost
+  #        port: 6379
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+#    rabbitmq:
+#        host: localhost
+#        port: 5672
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    operations-sorter: method
+upload-folder: uploads

@@ -20,6 +20,7 @@ public class RoleService {
     public Role findById(Long id) {
         return roleRepository.findById(id).orElse(new Role());
     }
+
     @Autowired
     private RoleRepository roleRepository;
 }

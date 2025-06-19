@@ -29,9 +29,9 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "email")
         })
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User implements Serializable {
 
     public User(String id, String username, String email) {
@@ -40,15 +40,6 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public User getGeneralDetail() {
-        return User
-                .builder()
-                .id(this.id)
-                .username(this.username)
-                .email(this.email)
-                .roles(this.roles)
-                .build();
-    }
     @Serial
     private static final long serialVersionUID = -7673348361769604572L;
     @Id
@@ -58,7 +49,7 @@ public class User implements Serializable {
     @Column
     private String email;
     @JsonManagedReference
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "USER_ROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private Set<Role> roles = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
