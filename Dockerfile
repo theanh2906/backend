@@ -1,14 +1,15 @@
-FROM maven:3.8.6 AS build
+FROM gradle:7.6-jdk17 AS build
 
 WORKDIR /app
 
-COPY pom.xml .
+COPY build.gradle .
+COPY settings.gradle .
 COPY src ./src
 
-RUN mvn clean install
+RUN gradle clean build --no-daemon
 
 FROM openjdk:17-alpine
 WORKDIR /app
-COPY --from=build /app/target/backend.jar backend.jar
+COPY --from=build /app/build/libs/backend.jar backend.jar
 
 ENTRYPOINT ["java", "-jar", "backend.jar"]
