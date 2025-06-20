@@ -1,7 +1,6 @@
 package com.example.backend.services;
 
 import com.example.backend.models.User;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Data
 @NoArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
@@ -73,6 +71,10 @@ public class UserDetailsImpl implements UserDetails {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getId() {
+        return id;
     }
     @Serial
     private static final long serialVersionUID = 9121016901168667594L;
