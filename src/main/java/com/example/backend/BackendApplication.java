@@ -1,6 +1,5 @@
 package com.example.backend;
 
-import com.example.backend.services.AzureService;
 import com.example.backend.shared.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +44,8 @@ public class BackendApplication extends SpringBootServletInitializer implements 
     ;
     @Autowired
     public Environment environment;
-    @Autowired
-    private AzureService azureService;
+//    @Autowired
+//    private AzureService azureService;
 
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);

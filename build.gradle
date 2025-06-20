@@ -2,15 +2,14 @@ plugins {
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'java'
-    id 'com.microsoft.azure.azurefunctions' version '1.8.0'
 }
 
 group = 'com.example'
 version = '1.0.0'
-sourceCompatibility = '21'
-targetCompatibility = '21'
 
 java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
@@ -19,6 +18,11 @@ java {
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
+    }
+
+    // Exclude commons-logging to avoid conflicts with spring-jcl
+    all {
+        exclude group: 'commons-logging', module: 'commons-logging'
     }
 }
 
@@ -67,8 +71,8 @@ dependencies {
     implementation 'commons-codec:commons-codec:1.15'
 
     // Apache POI
-    implementation 'org.apache.poi:poi:5.1.0'
-    implementation 'org.apache.poi:poi-ooxml:5.4.0'
+    implementation 'org.apache.poi:poi:5.2.3'
+    implementation 'org.apache.poi:poi-ooxml:5.2.3'
 
     // Google Libraries
     implementation 'com.google.auth:google-auth-library-oauth2-http:1.20.0'
