@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionHandlerController {
     @ExceptionHandler(Exception.class)
     public ResponseDto<?> handleException(Exception e) {
-        e.printStackTrace();
         return new ResponseDto<>(false, e.getMessage());
     }
 }

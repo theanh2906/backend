@@ -17,12 +17,11 @@ public class UserService {
         User addedUser = UserMapper.toModel(user);
         addedUser.setRoles(Collections.singleton(roleService.findById(Constant.Role.USER)));
         User result = userRepository.save(addedUser);
-        return UserDto
-                .builder()
-                .id(result.getId())
-                .email(result.getEmail())
-                .username(result.getUsername())
-                .build();
+        UserDto userDto = new UserDto();
+        userDto.setId(result.getId());
+        userDto.setEmail(result.getEmail());
+        userDto.setUsername(result.getUsername());
+        return userDto;
     }
     @Autowired
     private UserRepository userRepository;

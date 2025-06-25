@@ -66,12 +66,11 @@ public class AuthController {
             List<String> roles = userDetails
                     .getAuthorities()
                     .stream().map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.toList());
+                    .toList();
             return ResponseEntity.ok().body(new JwtResponse(jwt));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDto<>(false, "Invalid encoded string"));
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDto<>(false, e.getMessage()));
         }
     }

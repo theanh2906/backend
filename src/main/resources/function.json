@@ -1,6 +1,6 @@
 {
   "scriptFile": "backend.jar",
-  "entryPoint": "com.example.Function.echo",
+  "entryPoint": "com.example.backend.configurations.AzureFunction.springCloudFunction",
   "bindings": [
     {
       "type": "httpTrigger",

@@ -13,15 +13,15 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class FshareServiceAspect {
-//    @Before("execution(* com.example.backend.services.FshareService.*(..)) && target(fshareService)")
-//    public void aroundExecution(JoinPoint joinPoint, FshareService fshareService) {
-//        try {
-//            fshareService.setFshareData(request);
-//        } catch (Exception e) {
-//            logger.error(e.getLocalizedMessage());
-//        }
-//    }
-//    private final Logger logger = LoggerFactory.getLogger(FshareServiceAspect.class);
-//    @Autowired
-//    private HttpServletRequest request;
+    @Before("execution(* com.example.backend.services.FshareService.*(..)) && target(fshareService)")
+    public void aroundExecution(JoinPoint joinPoint, FshareService fshareService) {
+        try {
+            fshareService.setFshareData(request);
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage());
+        }
+    }
+    private final Logger logger = LoggerFactory.getLogger(FshareServiceAspect.class);
+    @Autowired
+    private HttpServletRequest request;
 }

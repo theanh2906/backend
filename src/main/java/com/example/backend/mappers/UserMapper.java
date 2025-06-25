@@ -21,13 +21,12 @@ public class UserMapper {
     }
 
     public static UserDto toModel(UserDetailsImpl userDetails) {
-        return UserDto
-                .builder()
-                .username(userDetails.getUsername())
-                .email(userDetails.getEmail())
-                .id(userDetails.getId())
-                .roles(userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .build();
+        UserDto userDto = new UserDto();
+        userDto.setUsername(userDetails.getUsername());
+        userDto.setEmail(userDetails.getEmail());
+        userDto.setId(userDetails.getId());
+        userDto.setRoles(userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+        return userDto;
     }
 
     public static User toModel(FirebaseUser registedUser) {
