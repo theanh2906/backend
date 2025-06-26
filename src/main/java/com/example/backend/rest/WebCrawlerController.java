@@ -23,16 +23,12 @@ public class WebCrawlerController {
                                             @RequestParam String selector,
                                             @RequestParam String imageAttribute,
                                             final HttpServletResponse response) {
-        try {
-            Map<String, String> params = new HashMap<>();
-            params.put("url", url);
-            params.put("selector", selector);
-            params.put("imageAttribute", imageAttribute);
-            webCrawlerService.downloadImages(params, response);
-            return ResponseEntity.ok("Downloading...");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        Map<String, String> params = new HashMap<>();
+        params.put("url", url);
+        params.put("selector", selector);
+        params.put("imageAttribute", imageAttribute);
+        webCrawlerService.downloadImages(params, response);
+        return ResponseEntity.ok("Downloading...");
     }
 
     @GetMapping("/get-links")
@@ -41,52 +37,27 @@ public class WebCrawlerController {
                                  @RequestParam String selector,
                                  @RequestParam String imageSelector,
                                  @RequestParam String imageAttribute) {
-        List<String> results = new ArrayList<>();
-        try {
-            results = webCrawlerService.getLinks(url, size, selector, imageSelector, imageAttribute);
-            return results;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return results;
+        return webCrawlerService.getLinks(url, size, selector, imageSelector, imageAttribute);
     }
 
     @GetMapping("")
     public List<String> getText(@RequestParam String url, @RequestParam Integer size, @RequestParam String selector) {
-        List<String> results = new ArrayList<>();
-        try {
-            results = webCrawlerService.getText(url, size, selector);
-            return results;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return results;
+        return webCrawlerService.getText(url, size, selector);
     }
 
     @GetMapping("/text")
     public List<String> getText(@RequestParam String url, @RequestParam String selector) {
-        List<String> results = new ArrayList<>();
-        try {
-            results = webCrawlerService.getText(url, selector);
-            return results;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return results;
+        return webCrawlerService.getText(url, selector);
     }
 
     @GetMapping("/save-images")
     public void saveImages(@RequestParam String url, @RequestParam String selector, @RequestParam(required = false) String imageAttribute) {
-        try {
-            Map<String, String> params = new HashMap<>();
-            params.put("url", url);
-            params.put("selector", selector);
-            params.put("imageAttribute", imageAttribute);
-            Thread thread = new Thread(() -> webCrawlerService.saveImages(params));
-            thread.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Map<String, String> params = new HashMap<>();
+        params.put("url", url);
+        params.put("selector", selector);
+        params.put("imageAttribute", imageAttribute);
+        Thread thread = new Thread(() -> webCrawlerService.saveImages(params));
+        thread.start();
     }
 
     @Autowired

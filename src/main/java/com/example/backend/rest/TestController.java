@@ -63,11 +63,7 @@ public class TestController {
     @GetMapping("/user")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> userAccess() {
-        try {
-            return ResponseEntity.ok(new ResponseDto<>(true, "Approved"));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseDto<>(false, e.getLocalizedMessage()));
-        }
+        return ResponseEntity.ok(new ResponseDto<>(true, "Approved"));
     }
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());

@@ -6,11 +6,12 @@ import com.example.backend.repositories.UserRepository;
 import com.example.backend.services.EventService;
 import com.example.backend.shared.Constant;
 import io.swagger.v3.oas.annotations.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +37,17 @@ public class EventController {
         return ResponseEntity.ok(eventService.save(event, false));
     }
 
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteEvents(@RequestBody List<String> eventIds) {
+        eventService.deleteEvents(eventIds);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("")
+    public ResponseEntity<?> editEvent(@RequestBody EventDto event) throws Exception {
+        return ResponseEntity.ok(eventService.save(event, false));
+    }
+
     @Operation(summary = "Find all events")
     @GetMapping("")
     public List<EventDto> findAll() {
@@ -49,56 +61,76 @@ public class EventController {
     @GetMapping("/firebase")
     public Flux<EventDto> getFirebaseData() {
         WebClient client = WebClient.builder().baseUrl(Constant.Firebase.EVENTS_API).build();
-        Flux<Map> rawResponse = client.get().retrieve().bodyToFlux(Map.class);
-        Flux<EventDto> response = rawResponse.flatMap(map -> {
-            List<EventDto> listEvents = new ArrayList<>();
-            map.keySet().forEach((event -> {
-                String id = (String) event;
-                listEvents.add(EventDto.builder()
-                        .id(id)
-                        .title((String) ((LinkedHashMap<?, ?>) map.get(id)).get("title"))
-                        .allDay((Boolean) ((LinkedHashMap<?, ?>) map.get(id)).get("allDay"))
-                        .start((String) ((LinkedHashMap<?, ?>) map.get(id)).get("start"))
-                        .end((String) ((LinkedHashMap<?, ?>) map.get(id)).get("end"))
-                        .build());
-            }));
-            return Flux.fromIterable(listEvents);
+
+        // Fetch data from Firebase
+        Flux<Map> rawResponse = client.get()
+            .retrieve()
+            .bodyToFlux(Map.class);
+
+        // Transform Firebase data to EventDto objects
+        Flux<EventDto> eventDtoFlux = rawResponse.flatMap(this::convertMapToEventDtos);
+
+        // Save events asynchronously without blocking the response
+        eventDtoFlux
+            .flatMap(this::saveEventAsync)
+            .subscribe();
+
+        return eventDtoFlux;
+    }
+
+    /**
+     * Converts a Firebase response map to a Flux of EventDto objects
+     *
+     * @param firebaseData Map containing Firebase data
+     * @return Flux of EventDto objects
+     */
+    private Flux<EventDto> convertMapToEventDtos(Map firebaseData) {
+        List<EventDto> events = new ArrayList<>();
+
+        firebaseData.forEach((key, value) -> {
+            String id = (String) key;
+            Map<String, Object> eventData = (LinkedHashMap<String, Object>) value;
+
+            EventDto eventDto = EventDto.builder()
+                .id(id)
+                .title((String) eventData.get("title"))
+                .allDay((Boolean) eventData.get("allDay"))
+                .start((String) eventData.get("start"))
+                .end((String) eventData.get("end"))
+                .build();
+
+            events.add(eventDto);
         });
-        response.flatMap((each) -> {
+
+        return Flux.fromIterable(events);
+    }
+
+    /**
+     * Saves an event asynchronously
+     *
+     * @param eventDto The event to save
+     * @return Mono containing the saved event
+     */
+    private Mono<EventDto> saveEventAsync(EventDto eventDto) {
+        return Mono.fromCallable(() -> {
             try {
-                eventService.save(each, true);
+                eventService.save(eventDto, true);
+                return eventDto;
             } catch (Exception e) {
-                return Flux.error(new RuntimeException(e));
+                throw new RuntimeException("Failed to save event: " + eventDto.getId(), e);
             }
-            return Mono.just(each);
-        }).subscribe();
-        return response;
+        }).onErrorResume(e -> {
+            // Log error and continue with next event
+            LOG.error("Error saving event {}: {}", eventDto.getId(), e.getMessage(), e);
+            return Mono.empty();
+        });
     }
 
     @GetMapping("/sync")
     public ResponseEntity<?> syncCalender() {
         return ResponseEntity.ok(null);
     }
-
-    @DeleteMapping("")
-    public ResponseEntity<?> deleteEvents(@RequestBody List<String> eventIds) {
-        try {
-            eventService.deleteEvents(eventIds);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @PutMapping("")
-    public ResponseEntity<?> editEvent(@RequestBody EventDto event) {
-        try {
-            return ResponseEntity.ok(eventService.save(event, false));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
+    private static final Logger LOG = LoggerFactory.getLogger(EventController.class);
     @Autowired
     private UserRepository userRepository;
     @Autowired

@@ -57,22 +57,16 @@ public class AuthController {
     @Operation(summary = "Login and authenticate credential")
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody String data) {
-        try {
-            LoginRequest loginRequest = Utils.map(data, LoginRequest.class);
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtUtils.generateJwtSecret(authentication);
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            List<String> roles = userDetails
-                    .getAuthorities()
-                    .stream().map(GrantedAuthority::getAuthority)
-                    .toList();
-            return ResponseEntity.ok().body(new JwtResponse(jwt));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDto<>(false, "Invalid encoded string"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseDto<>(false, e.getMessage()));
-        }
+        LoginRequest loginRequest = Utils.map(data, LoginRequest.class);
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtSecret(authentication);
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails
+                .getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority)
+                .toList();
+        return ResponseEntity.ok().body(new JwtResponse(jwt));
     }
 
     /**
@@ -84,22 +78,18 @@ public class AuthController {
     @PostMapping("/signup")
     @Deprecated
     public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
-        try {
-            if (userRepository.existsByUsername(signupRequest.getUsername())) {
-                return ResponseEntity.badRequest().body(new ResponseDto<>(false, "Username already exist!"));
-            } else if (userRepository.existsByEmail(signupRequest.getEmail())) {
-                return ResponseEntity.badRequest().body(new ResponseDto<>(false, "Email already exist!"));
-            }
-
-            User user = UserMapper.toModel(signupRequest);
-            Set<Role> roles = new HashSet<>();
-            roles.add(roleRepository.findByName(RoleEnum.ROLE_USER).orElse(null));
-            user.setRoles(roles);
-            userRepository.save(user);
-            return ResponseEntity.ok(new ResponseDto<>(true, "Successfully signup user!"));
-        } catch (ConstraintViolationException e) {
-            return ResponseEntity.badRequest().body(new ResponseDto<>(false, e.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.toList())));
+        if (userRepository.existsByUsername(signupRequest.getUsername())) {
+            return ResponseEntity.badRequest().body(new ResponseDto<>(false, "Username already exist!"));
+        } else if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return ResponseEntity.badRequest().body(new ResponseDto<>(false, "Email already exist!"));
         }
+
+        User user = UserMapper.toModel(signupRequest);
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleRepository.findByName(RoleEnum.ROLE_USER).orElse(null));
+        user.setRoles(roles);
+        userRepository.save(user);
+        return ResponseEntity.ok(new ResponseDto<>(true, "Successfully signup user!"));
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthController.class);

@@ -45,7 +45,7 @@ public class FshareController {
 
     @PostMapping("/upload")
     Mono<UploadResponse> upload(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
-        return fshareService.upload(file, path).doOnError(Throwable::printStackTrace);
+        return fshareService.upload(file, path);
     }
 
     @Autowired

@@ -11,11 +11,20 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
         NoteController.class,
         RoleController.class,
         SocketController.class,
-        EventController.class
+        BarcodeController.class,
+        StorageController.class,
+        TestController.class,
+        AzureController.class,
+        WebCrawlerController.class,
+        AuthController.class
 })
 public class ExceptionHandlerController {
     @ExceptionHandler(Exception.class)
     public ResponseDto<?> handleException(Exception e) {
-        return new ResponseDto<>(false, e.getMessage());
+        var response = new ResponseDto<>();
+        response.setSuccess(false);
+        response.setMessage(e.getMessage());
+        response.setStatusCode(500);
+        return response;
     }
 }

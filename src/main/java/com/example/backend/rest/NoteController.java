@@ -78,14 +78,12 @@ public class NoteController {
             });
             return Flux.fromIterable(listNotes);
         });
-        response.flatMap((each) -> {
-            try {
+        response.flatMap((each) -> 
+            Mono.fromCallable(() -> {
                 noteService.addNote(each, true);
-            } catch (Exception e) {
-                return Flux.error(new RuntimeException(e));
-            }
-            return Mono.just(each);
-        }).subscribe();
+                return each;
+            }).onErrorResume(e -> Mono.error(e))
+        ).subscribe();
         return response;
     }
 

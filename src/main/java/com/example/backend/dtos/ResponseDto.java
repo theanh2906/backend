@@ -39,4 +39,5 @@ public final class ResponseDto<T> {
     private List<String> messages;
     private String message;
     private T data;
+    private Integer statusCode;
 }
