@@ -28,8 +28,6 @@ services:
       dockerfile: Dockerfile
     image: theanh2906/backend
     container_name: backend
-    volumes:
-      - uploads:/app/uploads:rw
     network_mode: host
     ports:
       - "8081:8081"
@@ -39,6 +37,3 @@ services:
 #      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/postgres
 #      SPRING_DATASOURCE_USERNAME: postgres
 #      SPRING_DATASOURCE_PASSWORD: BenNa1402*
-volumes:
-  uploads:
-    driver: local
