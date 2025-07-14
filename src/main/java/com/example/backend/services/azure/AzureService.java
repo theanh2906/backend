@@ -1,4 +1,4 @@
-package com.example.backend.services;
+package com.example.backend.services.azure;
 
 import com.microsoft.graph.serviceclient.GraphServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.example.backend.configurations;
+package com.example.backend.configurations.azure;
 
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;

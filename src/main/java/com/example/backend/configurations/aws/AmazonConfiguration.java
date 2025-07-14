@@ -1,4 +1,4 @@
-package com.example.backend.configurations;
+package com.example.backend.configurations.aws;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
