@@ -11,4 +11,4 @@ FROM openjdk:17-alpine
 WORKDIR /app
 COPY --from=build /app/target/backend.jar backend.jar
 
-ENTRYPOINT ["java", "-jar", "backend.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "backend.jar"]

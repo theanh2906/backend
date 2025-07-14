@@ -1,6 +1,24 @@
 server:
   port: 8081
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        retry:
+          enabled: false
+          initial-interval: 1000
+          max-attempts: 3
+          max-interval: 10000
+          multiplier: 2.0
+    template:
+      retry:
+        max-attempts: 3
+        enabled: false
   datasource:
     hikari:
       schema: public
