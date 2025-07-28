@@ -50,7 +50,7 @@ public class RabbitMQConfiguration {
         return new Jackson2JsonMessageConverter();
     }
     // Queue name
-    public static final String DEFAULT_QUEUE = "default.queue";
+    public static final String DEFAULT_QUEUE = "default";
     // Exchange name
     public static final String DIRECT_EXCHANGE = "direct.exchange";
     // Routing key

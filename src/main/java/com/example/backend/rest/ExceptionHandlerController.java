@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
         GoogleController.class,
         NoteController.class,
         RoleController.class,
-        SocketController.class,
         BarcodeController.class,
         StorageController.class,
         TestController.class,
