@@ -23,8 +23,8 @@ public class KafkaProducerService {
      *
      * @param message The message to send
      */
-    public void sendToDefaultTopic(String message) {
-        sendMessage(KafkaConfiguration.DEFAULT_TOPIC, message);
+    public void sendToBackendTopic(String message) {
+        sendMessage(KafkaConfiguration.BACKEND_TOPIC, message);
     }
 
     /**
@@ -33,37 +33,8 @@ public class KafkaProducerService {
      * @param key     The message key
      * @param message The message to send
      */
-    public void sendToDefaultTopic(String key, String message) {
-        sendMessage(KafkaConfiguration.DEFAULT_TOPIC, key, message);
-    }
-
-    /**
-     * Send a notification message
-     *
-     * @param message The notification message to send
-     */
-    public void sendNotification(String message) {
-        sendMessage(KafkaConfiguration.NOTIFICATION_TOPIC, message);
-    }
-
-    /**
-     * Send a notification message with a specific key
-     *
-     * @param key     The message key
-     * @param message The notification message to send
-     */
-    public void sendNotification(String key, String message) {
-        sendMessage(KafkaConfiguration.NOTIFICATION_TOPIC, key, message);
-    }
-
-    /**
-     * Send a user event message
-     *
-     * @param userId The user ID as key
-     * @param event  The event data
-     */
-    public void sendUserEvent(String userId, Object event) {
-        sendMessage(KafkaConfiguration.USER_EVENTS_TOPIC, userId, event);
+    public void sendToBackendTopic(String key, String message) {
+        sendMessage(KafkaConfiguration.BACKEND_TOPIC, key, message);
     }
 
     /**
@@ -77,10 +48,10 @@ public class KafkaProducerService {
             CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, message);
             future.whenComplete((result, ex) -> {
                 if (ex == null) {
-                    LOG.info("Sent message=[{}] to topic=[{}] with offset=[{}]", 
+                    LOG.info("Sent message=[{}] to topic=[{}] with offset=[{}]",
                             message, topic, result.getRecordMetadata().offset());
                 } else {
-                    LOG.error("Unable to send message=[{}] to topic=[{}] due to: {}", 
+                    LOG.error("Unable to send message=[{}] to topic=[{}] due to: {}",
                             message, topic, ex.getMessage());
                 }
             });
@@ -101,10 +72,10 @@ public class KafkaProducerService {
             CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, key, message);
             future.whenComplete((result, ex) -> {
                 if (ex == null) {
-                    LOG.info("Sent message=[{}] with key=[{}] to topic=[{}] with offset=[{}]", 
+                    LOG.info("Sent message=[{}] with key=[{}] to topic=[{}] with offset=[{}]",
                             message, key, topic, result.getRecordMetadata().offset());
                 } else {
-                    LOG.error("Unable to send message=[{}] with key=[{}] to topic=[{}] due to: {}", 
+                    LOG.error("Unable to send message=[{}] with key=[{}] to topic=[{}] due to: {}",
                             message, key, topic, ex.getMessage());
                 }
             });
@@ -125,7 +96,7 @@ public class KafkaProducerService {
         try {
             CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, message);
             SendResult<String, Object> result = future.get();
-            LOG.info("Sent message=[{}] to topic=[{}] synchronously with offset=[{}]", 
+            LOG.info("Sent message=[{}] to topic=[{}] synchronously with offset=[{}]",
                     message, topic, result.getRecordMetadata().offset());
             return result;
         } catch (Exception e) {
@@ -147,7 +118,7 @@ public class KafkaProducerService {
         try {
             CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, key, message);
             SendResult<String, Object> result = future.get();
-            LOG.info("Sent message=[{}] with key=[{}] to topic=[{}] synchronously with offset=[{}]", 
+            LOG.info("Sent message=[{}] with key=[{}] to topic=[{}] synchronously with offset=[{}]",
                     message, key, topic, result.getRecordMetadata().offset());
             return result;
         } catch (Exception e) {
