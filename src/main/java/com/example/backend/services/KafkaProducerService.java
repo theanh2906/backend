@@ -16,7 +16,7 @@ public class KafkaProducerService {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerService.class);
 
     @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     /**
      * Send a message to the default topic
@@ -43,9 +43,9 @@ public class KafkaProducerService {
      * @param topic   The topic to send to
      * @param message The message to send
      */
-    public void sendMessage(String topic, Object message) {
+    public void sendMessage(String topic, String message) {
         try {
-            CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, message);
+            CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, message);
             future.whenComplete((result, ex) -> {
                 if (ex == null) {
                     LOG.info("Sent message=[{}] to topic=[{}] with offset=[{}]",
@@ -67,9 +67,9 @@ public class KafkaProducerService {
      * @param key     The message key
      * @param message The message to send
      */
-    public void sendMessage(String topic, String key, Object message) {
+    public void sendMessage(String topic, String key, String message) {
         try {
-            CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, key, message);
+            CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, key, message);
             future.whenComplete((result, ex) -> {
                 if (ex == null) {
                     LOG.info("Sent message=[{}] with key=[{}] to topic=[{}] with offset=[{}]",
@@ -92,10 +92,10 @@ public class KafkaProducerService {
      * @return SendResult containing metadata about the sent message
      * @throws Exception if sending fails
      */
-    public SendResult<String, Object> sendMessageSync(String topic, Object message) throws Exception {
+    public SendResult<String, String> sendMessageSync(String topic, String message) throws Exception {
         try {
-            CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, message);
-            SendResult<String, Object> result = future.get();
+            CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, message);
+            SendResult<String, String> result = future.get();
             LOG.info("Sent message=[{}] to topic=[{}] synchronously with offset=[{}]",
                     message, topic, result.getRecordMetadata().offset());
             return result;
@@ -114,10 +114,10 @@ public class KafkaProducerService {
      * @return SendResult containing metadata about the sent message
      * @throws Exception if sending fails
      */
-    public SendResult<String, Object> sendMessageSync(String topic, String key, Object message) throws Exception {
+    public SendResult<String, String> sendMessageSync(String topic, String key, String message) throws Exception {
         try {
-            CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(topic, key, message);
-            SendResult<String, Object> result = future.get();
+            CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, key, message);
+            SendResult<String, String> result = future.get();
             LOG.info("Sent message=[{}] with key=[{}] to topic=[{}] synchronously with offset=[{}]",
                     message, key, topic, result.getRecordMetadata().offset());
             return result;

@@ -113,10 +113,11 @@ public class KafkaController {
                 return ResponseEntity.badRequest().body(response);
             }
 
+            String messageStr = message.toString();
             if (key != null) {
-                kafkaProducerService.sendMessage(topic, key, message);
+                kafkaProducerService.sendMessage(topic, key, messageStr);
             } else {
-                kafkaProducerService.sendMessage(topic, message);
+                kafkaProducerService.sendMessage(topic, messageStr);
             }
 
             Map<String, Object> response = new HashMap<>();
@@ -161,11 +162,12 @@ public class KafkaController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            SendResult<String, Object> result;
+            String messageStr = message.toString();
+            SendResult<String, String> result;
             if (key != null) {
-                result = kafkaProducerService.sendMessageSync(topic, key, message);
+                result = kafkaProducerService.sendMessageSync(topic, key, messageStr);
             } else {
-                result = kafkaProducerService.sendMessageSync(topic, message);
+                result = kafkaProducerService.sendMessageSync(topic, messageStr);
             }
 
             Map<String, Object> response = new HashMap<>();
