@@ -1,6 +1,8 @@
 package com.example.backend.listeners;
 
 import com.example.backend.configurations.KafkaConfiguration;
+import com.example.backend.models.kafka.KafkaMessage;
+import com.example.backend.utils.Utils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +14,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class KafkaMessageListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaMessageListener.class);
+  /**
+     * Process messages from the default topic
+     *
+     * @param message The message content
+     * @param key     The message key
+     */
+    private void processBackendMessage(String message, String key) {
+        LOG.info("Processing default message: [{}] with key: [{}]", message, key);
+        // Add your business logic here
+        // For example: save to database, call other services, etc.
+    }
 
   /**
    * Listen for string messages on the backend topic
@@ -35,6 +47,9 @@ public class KafkaMessageListener {
 
       // Process the string message here
       processBackendStringMessage(message, record.key());
+      var kafkaMessage = Utils.map(KafkaMessage.class, message);
+        assert kafkaMessage != null;
+        LOG.info(kafkaMessage.getType() + " " + kafkaMessage.getData().toString());
 
       // Manual acknowledgment
       ack.acknowledge();
@@ -44,19 +59,6 @@ public class KafkaMessageListener {
       // Don't acknowledge on error - message will be retried
     }
   }
-
-
-  /**
-     * Process messages from the default topic
-     *
-     * @param message The message content
-     * @param key     The message key
-     */
-    private void processBackendMessage(String message, String key) {
-        LOG.info("Processing default message: [{}] with key: [{}]", message, key);
-        // Add your business logic here
-        // For example: save to database, call other services, etc.
-    }
 
   /**
    * Process string messages from the backend topic
@@ -68,5 +70,6 @@ public class KafkaMessageListener {
     LOG.info("Processing string message: [{}] with key: [{}]", message, key);
     // Add your business logic here for string messages
   }
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaMessageListener.class);
 
 }
